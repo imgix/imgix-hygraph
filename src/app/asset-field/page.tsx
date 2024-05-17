@@ -19,7 +19,7 @@ import { ContentTableCell } from './components/ContentTableCell/ContentTableCell
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
-const DIALOG_MAX_WIDTH = '1280px';
+const DIALOG_MAX_WIDTH = 'calc(100vw - 160px)';
 
 export type ImgixAsset = {
   url: string;
