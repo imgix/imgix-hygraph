@@ -44,12 +44,18 @@ export default function AssetDialog() {
     excludedIds: excludedAssets
   });
 
-  const addToSelection = (asset: HygraphAsset) => {
-    setSelectedAssets((assets) => uniqueBy([...assets, asset], (asset) => asset.id));
+  const addToSelection = (addedAssets: HygraphAsset[]) => {
+    setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
   };
 
-  const removeFromSelection = (asset: HygraphAsset) => {
-    setSelectedAssets((assets) => assets.filter((selectedAsset) => selectedAsset.id !== asset.id));
+  const removeFromSelection = (removedAssets: HygraphAsset[]) => {
+    setSelectedAssets((assets) =>
+      assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
+    );
+  };
+
+  const clearSelection = () => {
+    setSelectedAssets([]);
   };
 
   const onSelect = (asset: HygraphAsset) => {
@@ -57,21 +63,13 @@ export default function AssetDialog() {
       return closeDialogWithResult([asset]);
     }
 
-    addToSelection(asset);
+    addToSelection([asset]);
   };
 
-  if (assetsQuery.isLoading || !assetsQuery.data) {
-    return (
-      <div className="h-[48rem]">
-        <Progress variant="slim" margin={0} />
-      </div>
-    );
-  }
-
-  const { assets, totalAssetCount } = assetsQuery.data;
+  const isLoading = assetsQuery.isLoading || !assetsQuery.data;
 
   return (
-    <div className="h-screen max-h-[48rem]">
+    <div className="h-[48rem]">
       <div className="grid h-full grid-rows-[repeat(4,auto)_1fr_repeat(2,auto)]">
         <DialogHeader />
 
@@ -81,7 +79,7 @@ export default function AssetDialog() {
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
           {selectedAssets.length > 0 ? (
-            <Button variant="ghost" variantColor="secondary" size="small" onClick={() => setSelectedAssets([])}>
+            <Button variant="ghost" variantColor="secondary" size="small" onClick={clearSelection}>
               Clear selection
             </Button>
           ) : null}
@@ -105,102 +103,18 @@ export default function AssetDialog() {
         <Divider margin="0" />
 
         <div className="overflow-auto">
-          <table>
-            <thead>
-              <tr className="h-[28px] w-full border-b shadow-sm">
-                <TableHeader className="w-[60px]">
-                  {!isSingleSelect ? (
-                    <div className="grid place-items-center">
-                      <Checkbox
-                        checked={selectedAssets.length === assets.length}
-                        onCheckedChange={() => {
-                          if (selectedAssets.length === assets.length) {
-                            return setSelectedAssets([]);
-                          }
-
-                          setSelectedAssets(assets);
-                        }}
-                      />
-                    </div>
-                  ) : null}
-                </TableHeader>
-                <TableHeader className="w-[130px]">Stages</TableHeader>
-                <TableHeader className="w-[80px]">Preview</TableHeader>
-                <TableHeader>ID</TableHeader>
-                <TableHeader>Created At</TableHeader>
-                <TableHeader>Created By</TableHeader>
-                <TableHeader>Updated At</TableHeader>
-                <TableHeader>Updated By</TableHeader>
-                <TableHeader>Handle</TableHeader>
-                <TableHeader>File Name</TableHeader>
-                <TableHeader>Height</TableHeader>
-                <TableHeader>Width</TableHeader>
-                <TableHeader>Size</TableHeader>
-                <TableHeader>Mime Type</TableHeader>
-              </tr>
-            </thead>
-
-            <tbody>
-              {assets.map((asset) => {
-                const isSelected = selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id);
-
-                return (
-                  <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
-                    <TableCell className="min-w-[60px]">
-                      <div className="grid place-items-center">
-                        {isSingleSelect ? (
-                          <SelectAssetButton onClick={() => onSelect(asset)} />
-                        ) : (
-                          <Checkbox
-                            checked={isSelected}
-                            onCheckedChange={() => {
-                              if (isSelected) {
-                                return removeFromSelection(asset);
-                              }
-
-                              onSelect(asset);
-                            }}
-                          />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="min-w-[130px]"></TableCell>
-                    <TableCell className="min-w-[80px]">
-                      <img
-                        src={getResizedHygraphUrl(asset.url, asset.handle)}
-                        className="max-h-[60px] w-[80px] object-cover"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Pill maxWidth={110} size="24">
-                        {asset.id}
-                      </Pill>
-                    </TableCell>
-                    <TableCell>{formatDate(new Date(asset.createdAt))}</TableCell>
-                    <TableCell>
-                      <User name={asset.createdBy.name} picture={asset.createdBy.picture} />
-                    </TableCell>
-                    <TableCell>{formatDate(new Date(asset.updatedAt))}</TableCell>
-                    <TableCell>
-                      <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} />
-                    </TableCell>
-                    <TableCell>{asset.handle}</TableCell>
-                    <TableCell>{asset.fileName}</TableCell>
-                    <TableCell>
-                      <pre>{asset.height}</pre>
-                    </TableCell>
-                    <TableCell>
-                      <pre>{asset.width}</pre>
-                    </TableCell>
-                    <TableCell>
-                      <pre>{prettyBytes(asset.size)}</pre>
-                    </TableCell>
-                    <TableCell>{asset.mimeType}</TableCell>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {isLoading ? (
+            <Progress variant="slim" margin={0} />
+          ) : (
+            <AssetTable
+              removeFromSelection={removeFromSelection}
+              onSelect={onSelect}
+              assets={assetsQuery.data.assets}
+              selectedAssets={selectedAssets}
+              isSingleSelect={isSingleSelect}
+              addToSelection={addToSelection}
+            />
+          )}
         </div>
 
         <Pagination
@@ -208,7 +122,7 @@ export default function AssetDialog() {
           setPage={setPage}
           resultsPerPage={resultsPerPage}
           setResultsPerPage={setResultsPerPage}
-          totalItems={totalAssetCount}
+          totalItems={assetsQuery.data?.totalAssetCount ?? 0}
         />
 
         {!isSingleSelect ? (
@@ -219,6 +133,123 @@ export default function AssetDialog() {
         ) : null}
       </div>
     </div>
+  );
+}
+
+function AssetTable({
+  removeFromSelection,
+  onSelect,
+  assets,
+  selectedAssets,
+  isSingleSelect,
+  addToSelection
+}: {
+  removeFromSelection: (removedAssets: HygraphAsset[]) => void;
+  onSelect: (asset: HygraphAsset) => void;
+  assets: HygraphAsset[];
+  selectedAssets: HygraphAsset[];
+  isSingleSelect: boolean;
+  addToSelection: (addedAssets: HygraphAsset[]) => void;
+}) {
+  const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
+
+  return (
+    <table>
+      <thead>
+        <tr className="h-[28px] w-full border-b shadow-sm">
+          <TableHeader className="w-[60px]">
+            {!isSingleSelect ? (
+              <div className="grid place-items-center">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={() => {
+                    if (allSelected) {
+                      return removeFromSelection(assets);
+                    }
+
+                    addToSelection(assets);
+                  }}
+                />
+              </div>
+            ) : null}
+          </TableHeader>
+          <TableHeader className="w-[130px]">Stages</TableHeader>
+          <TableHeader className="w-[80px]">Preview</TableHeader>
+          <TableHeader>ID</TableHeader>
+          <TableHeader>Created At</TableHeader>
+          <TableHeader>Created By</TableHeader>
+          <TableHeader>Updated At</TableHeader>
+          <TableHeader>Updated By</TableHeader>
+          <TableHeader>Handle</TableHeader>
+          <TableHeader>File Name</TableHeader>
+          <TableHeader>Height</TableHeader>
+          <TableHeader>Width</TableHeader>
+          <TableHeader>Size</TableHeader>
+          <TableHeader>Mime Type</TableHeader>
+        </tr>
+      </thead>
+
+      <tbody>
+        {assets.map((asset) => {
+          const isSelected = selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id);
+
+          return (
+            <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
+              <TableCell className="min-w-[60px]">
+                <div className="grid place-items-center">
+                  {isSingleSelect ? (
+                    <SelectAssetButton onClick={() => onSelect(asset)} />
+                  ) : (
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => {
+                        if (isSelected) {
+                          return removeFromSelection([asset]);
+                        }
+
+                        onSelect(asset);
+                      }}
+                    />
+                  )}
+                </div>
+              </TableCell>
+              <TableCell className="min-w-[130px]"></TableCell>
+              <TableCell className="min-w-[80px]">
+                <img
+                  src={getResizedHygraphUrl(asset.url, asset.handle)}
+                  className="max-h-[60px] w-[80px] object-cover"
+                />
+              </TableCell>
+              <TableCell>
+                <Pill maxWidth={110} size="24">
+                  {asset.id}
+                </Pill>
+              </TableCell>
+              <TableCell>{formatDate(new Date(asset.createdAt))}</TableCell>
+              <TableCell>
+                <User name={asset.createdBy.name} picture={asset.createdBy.picture} />
+              </TableCell>
+              <TableCell>{formatDate(new Date(asset.updatedAt))}</TableCell>
+              <TableCell>
+                <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} />
+              </TableCell>
+              <TableCell>{asset.handle}</TableCell>
+              <TableCell>{asset.fileName}</TableCell>
+              <TableCell>
+                <pre>{asset.height}</pre>
+              </TableCell>
+              <TableCell>
+                <pre>{asset.width}</pre>
+              </TableCell>
+              <TableCell>
+                <pre>{prettyBytes(asset.size)}</pre>
+              </TableCell>
+              <TableCell>{asset.mimeType}</TableCell>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
 
