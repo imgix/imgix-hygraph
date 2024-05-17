@@ -7,8 +7,8 @@
     "clientSecretLabel": "Client secret",
     "usernameLabel": "Username",
     "passwordLabel": "Password",
-    "apiLabel": "Imgix base url",
-    "saveButtonLabel": "Save config settings",
+    "apiLabel": "Your imgix source base URL",
+    "saveButtonLabel": "Save config",
     "saveButtonLoadingLabel": "Saving...",
     "pimUrlLabel": "PIM URL",
     "invalidCredentials": "Invalid credentials",
@@ -16,7 +16,8 @@
       "title": "Error",
       "description": "An error occurred:",
       "actionBtnTitle": "Try again"
-    }
+    },
+    "description": "This app allows you to easily use imgix assets in Hygraph. Please provide the following details to get started:"
   },
   "assetPicker": {
     "addAssetButtonLabel": "Add asset",

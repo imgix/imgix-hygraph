@@ -1,12 +1,13 @@
 'use client';
 
-import { Box, Button, Card, Input, Label, Stack } from '@hygraph/baukasten';
-
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
 import { useAppConfig } from '@/hooks/useAppConfig';
+import { Box, Button, Input, Label } from '@hygraph/baukasten';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import HygraphIcon from '../../../public/hygraph-icon.svg';
+import ImgixIcon from '../../../public/imgix-icon.png';
 
 const SetupPage = () => {
   const config = useAppConfig();
@@ -19,34 +20,32 @@ const SetupPage = () => {
   const isButtonDisabled = !imgixBase;
 
   return (
-    <>
-      <main className="pb-16">
-        <Card className="mx-auto mb-32 w-[31rem] p-48">
-          <Stack className="gap-24">
-            <Image src="/hygraph-logo.webp" alt="Asset manager logo" width={50} height={50} />
-          </Stack>
-          <Box className="mb-24">
-            {/*@ts-expect-error due to broken types*/}
-            <Label>{t('setup.apiLabel')}</Label>
-            <Input
-              value={imgixBase}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixBase(e.target.value)}
-            />
-          </Box>
+    <div className="max-w-md space-y-24">
+      <div className="space-y-4">
+        <div className="flex items-center space-x-4">
+          <Image src={ImgixIcon} alt="imgix logo" height={48} />
+          <span className="text-3xl">+</span>
+          <HygraphIcon className="h-48" />
+        </div>
 
-          <Button
-            className="self-start capitalize"
-            size="large"
-            onClick={() => updateConfig({ imgixBase })}
-            disabled={isButtonDisabled || isUpdatingConfig}
-            loading={isUpdatingConfig}
-            loadingText={t('setup.saveButtonLoadingLabel')}
-          >
-            {t('setup.saveButtonLabel')}
-          </Button>
-        </Card>
-      </main>
-    </>
+        <p className="leading-normal text-slate-700">{t('setup.description')}</p>
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm">{t('setup.apiLabel')}</label>
+        <Input value={imgixBase} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixBase(e.target.value)} />
+      </div>
+
+      <Button
+        size="large"
+        onClick={() => updateConfig({ imgixBase })}
+        disabled={isButtonDisabled || isUpdatingConfig}
+        loading={isUpdatingConfig}
+        loadingText={t('setup.saveButtonLoadingLabel')}
+      >
+        {t('setup.saveButtonLabel')}
+      </Button>
+    </div>
   );
 };
 
