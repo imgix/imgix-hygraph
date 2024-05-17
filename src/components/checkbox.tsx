@@ -6,7 +6,6 @@ import { Check } from '@hygraph/icons';
 import { cn } from '@/util';
 import { Box } from '@hygraph/baukasten';
 
-// TODO: random checkbox, because CheckBox from @hygraph/baukasten is not working, replace with the actual checkbox or style it to match hygraph UI
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>

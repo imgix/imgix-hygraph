@@ -6,7 +6,6 @@ import { Check, ChevronDown, ChevronUp } from '@hygraph/icons';
 import { cn } from '@/util';
 import { Box } from '@hygraph/baukasten';
 
-// TODO: random select, because Select from @hygraph/baukasten is not customizable enough'replace with the actual select or style it to match hygraph UI
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;

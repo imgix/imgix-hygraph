@@ -1,7 +1,6 @@
 import { Select } from '@headlessui/react';
-import { Button, CheckBox } from '@hygraph/baukasten';
+import { Button } from '@hygraph/baukasten';
 
-// TODO: improve ui
 export const Pagination = ({
   page,
   totalItems,
