@@ -63,7 +63,10 @@ export const Pagination = ({
         <span>Show</span>
         <Select
           value={String(resultsPerPage)}
-          onChange={(e) => setResultsPerPage(Number(e.target.value))}
+          onChange={(e) => {
+            setResultsPerPage(Number(e.target.value));
+            setPage(1);
+          }}
           className="rounded border border-slate-300 px-2 py-1.5 text-black"
         >
           {[5, 10, 15, 20, 25, 50, 75, 100].map((resultsPerPage) => (
