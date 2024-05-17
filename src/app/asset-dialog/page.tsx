@@ -215,6 +215,7 @@ function AssetTable({
               </TableCell>
               <TableCell className="min-w-[130px]"></TableCell>
               <TableCell className="min-w-[80px]">
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img
                   src={getResizedHygraphUrl(asset.url, asset.handle)}
                   className="max-h-[60px] w-[80px] object-cover"

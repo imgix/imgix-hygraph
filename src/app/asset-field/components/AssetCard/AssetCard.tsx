@@ -27,7 +27,10 @@ const AssetCard = ({ dragHandleProps, onRemoveItem, name, id, isSingleAsset, ima
       )}
       <Flex justifyContent="center" alignItems="center" width={70} minWidth={70} height={70} ml={16}>
         {imageUrl ? (
-          <img src={getResizedImgixUrl(imageUrl)} className="h-[70px] w-[70px] object-cover" />
+          <>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <img src={getResizedImgixUrl(imageUrl)} className="h-[70px] w-[70px] object-cover" />
+          </>
         ) : (
           <Box as={FieldAsset} color="neutral.200" width={50} height={50} />
         )}
