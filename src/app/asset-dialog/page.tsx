@@ -1,19 +1,34 @@
 'use client';
 
-import { Checkbox } from '@/components/checkbox';
-import { cn } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Box, Button, Divider, Heading, IconButton, Pill, Progress } from '@hygraph/baukasten';
-import { FieldRelation } from '@hygraph/icons';
-import prettyBytes from 'pretty-bytes';
-import { useState, type ReactNode } from 'react';
+import { Box, Button, Divider, Heading, Progress } from '@hygraph/baukasten';
+import { useState } from 'react';
 import { uniqueBy } from 'remeda';
+import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
-import { User } from './components/user';
 import { HygraphAsset, useHygraphAssets } from './useHygraphAssets';
 import AttachmentIcon from '/public/icons/attachment.svg';
+import { useImgixAssets } from './useImgixAssets';
+import { type AppConfig } from '@/hooks/useAppConfig';
 
 export default function AssetDialog() {
+  const { configuration } = useUiExtensionDialog<
+    HygraphAsset[],
+    {
+      configuration: AppConfig;
+    }
+  >();
+
+  if (configuration.imgixSourceType === 'webfolder') {
+    return <HygraphAssetDialog />;
+  }
+
+  if (configuration.imgixSourceType === 'other') {
+    return <ImgixAssetDialog />;
+  }
+}
+
+function HygraphAssetDialog() {
   const {
     onCloseDialog: closeDialogWithResult,
     isSingleSelect,
@@ -136,142 +151,146 @@ export default function AssetDialog() {
   );
 }
 
-function AssetTable({
-  removeFromSelection,
-  onSelect,
-  assets,
-  selectedAssets,
-  isSingleSelect,
-  addToSelection
-}: {
-  removeFromSelection: (removedAssets: HygraphAsset[]) => void;
-  onSelect: (asset: HygraphAsset) => void;
-  assets: HygraphAsset[];
-  selectedAssets: HygraphAsset[];
-  isSingleSelect: boolean;
-  addToSelection: (addedAssets: HygraphAsset[]) => void;
-}) {
-  const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
+function ImgixAssetDialog() {
+  const {
+    onCloseDialog: closeDialogWithResult,
+    isSingleSelect,
+    configuration
+  } = useUiExtensionDialog<
+    HygraphAsset[],
+    {
+      isSingleSelect: boolean;
+      excludedAssets: string[];
+      configuration: AppConfig;
+    }
+  >();
+
+  const [selectedAssets, setSelectedAssets] = useState<HygraphAsset[]>([]);
+  const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
+  const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<HygraphAsset[]>([]);
+
+  const [resultsPerPage, setResultsPerPage] = useState(25);
+  const [page, setPage] = useState(1);
+
+  const assetsQuery = useImgixAssets({
+    apiKey: configuration.imgixToken,
+    pageNumber: page,
+    resultsPerPage: resultsPerPage,
+    sourceId: configuration.imgixSourceId
+  });
+
+  const addToSelection = (addedAssets: HygraphAsset[]) => {
+    setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
+  };
+
+  const removeFromSelection = (removedAssets: HygraphAsset[]) => {
+    setSelectedAssets((assets) =>
+      assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
+    );
+  };
+
+  const clearSelection = () => {
+    setSelectedAssets([]);
+  };
+
+  const onSelect = (asset: HygraphAsset) => {
+    if (isSingleSelect) {
+      return closeDialogWithResult([asset]);
+    }
+
+    addToSelection([asset]);
+  };
+
+  const isLoading = assetsQuery.isLoading || !assetsQuery.data;
+
+  const assets = assetsQuery.data?.assets.map((asset): HygraphAsset => {
+    return {
+      createdAt: new Date(asset.attributes.date_created * 1000).toISOString(),
+      createdBy: {
+        name: asset.attributes.uploaded_by ?? ''
+      },
+      fileName: asset.attributes.origin_path.split('/').pop()!,
+      size: asset.attributes.file_size,
+      width: asset.attributes.media_width,
+      height: asset.attributes.media_height,
+      url: asset.attributes.origin_path,
+      id: asset.id,
+      handle: asset.attributes.origin_path,
+      mimeType: asset.attributes.content_type,
+      stage: 'published',
+      updatedAt: new Date(asset.attributes.date_modified * 1000).toISOString(),
+      updatedBy: {
+        name: ''
+      }
+    };
+  });
 
   return (
-    <table>
-      <thead>
-        <tr className="h-[28px] w-full border-b shadow-sm">
-          <TableHeader className="w-[60px]">
-            {!isSingleSelect ? (
-              <div className="grid place-items-center">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={() => {
-                    if (allSelected) {
-                      return removeFromSelection(assets);
-                    }
+    <div className="h-[48rem]">
+      <div className="grid h-full grid-rows-[repeat(4,auto)_1fr_repeat(2,auto)]">
+        <DialogHeader />
 
-                    addToSelection(assets);
-                  }}
-                />
-              </div>
-            ) : null}
-          </TableHeader>
-          <TableHeader className="w-[130px]">Stages</TableHeader>
-          <TableHeader className="w-[80px]">Preview</TableHeader>
-          <TableHeader>ID</TableHeader>
-          <TableHeader>Created At</TableHeader>
-          <TableHeader>Created By</TableHeader>
-          <TableHeader>Updated At</TableHeader>
-          <TableHeader>Updated By</TableHeader>
-          <TableHeader>Handle</TableHeader>
-          <TableHeader>File Name</TableHeader>
-          <TableHeader>Height</TableHeader>
-          <TableHeader>Width</TableHeader>
-          <TableHeader>Size</TableHeader>
-          <TableHeader>Mime Type</TableHeader>
-        </tr>
-      </thead>
+        <Divider margin="0" />
 
-      <tbody>
-        {assets.map((asset) => {
-          const isSelected = selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id);
+        <Box px="24px" py="8px" className="flex space-x-2 text-m">
+          <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
-          return (
-            <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
-              <TableCell className="min-w-[60px]">
-                <div className="grid place-items-center">
-                  {isSingleSelect ? (
-                    <SelectAssetButton onClick={() => onSelect(asset)} />
-                  ) : (
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => {
-                        if (isSelected) {
-                          return removeFromSelection([asset]);
-                        }
+          {selectedAssets.length > 0 ? (
+            <Button variant="ghost" variantColor="secondary" size="small" onClick={clearSelection}>
+              Clear selection
+            </Button>
+          ) : null}
 
-                        onSelect(asset);
-                      }}
-                    />
-                  )}
-                </div>
-              </TableCell>
-              <TableCell className="min-w-[130px]"></TableCell>
-              <TableCell className="min-w-[80px]">
-                {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <img
-                  src={getResizedHygraphUrl(asset.url, asset.handle)}
-                  className="max-h-[60px] w-[80px] object-cover"
-                />
-              </TableCell>
-              <TableCell>
-                <Pill maxWidth={110} size="24">
-                  {asset.id}
-                </Pill>
-              </TableCell>
-              <TableCell>{formatDate(new Date(asset.createdAt))}</TableCell>
-              <TableCell>
-                <User name={asset.createdBy.name} picture={asset.createdBy.picture} />
-              </TableCell>
-              <TableCell>{formatDate(new Date(asset.updatedAt))}</TableCell>
-              <TableCell>
-                <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} />
-              </TableCell>
-              <TableCell>{asset.handle}</TableCell>
-              <TableCell>{asset.fileName}</TableCell>
-              <TableCell>
-                <pre>{asset.height}</pre>
-              </TableCell>
-              <TableCell>
-                <pre>{asset.width}</pre>
-              </TableCell>
-              <TableCell>
-                <pre>{prettyBytes(asset.size)}</pre>
-              </TableCell>
-              <TableCell>{asset.mimeType}</TableCell>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          {selectedAssets.length > 0 || showOnlySelectedAssets ? (
+            <Button
+              variant="ghost"
+              variantColor="secondary"
+              size="small"
+              onClick={() => {
+                setSelectedAssetsSnapshot(selectedAssets);
+                setPage(1);
+                setShowOnlySelectedAssets(!showOnlySelectedAssets);
+              }}
+            >
+              {showOnlySelectedAssets ? 'Show all entries' : 'Show selected entries'}
+            </Button>
+          ) : null}
+        </Box>
+
+        <Divider margin="0" />
+
+        <div className="overflow-auto">
+          {isLoading ? (
+            <Progress variant="slim" margin={0} />
+          ) : (
+            <AssetTable
+              removeFromSelection={removeFromSelection}
+              onSelect={onSelect}
+              assets={assets!}
+              selectedAssets={selectedAssets}
+              isSingleSelect={isSingleSelect}
+              addToSelection={addToSelection}
+            />
+          )}
+        </div>
+
+        <Pagination
+          page={page}
+          setPage={setPage}
+          resultsPerPage={resultsPerPage}
+          setResultsPerPage={setResultsPerPage}
+          totalItems={assetsQuery.data?.totalAssetCount ?? 0}
+        />
+
+        {!isSingleSelect ? (
+          <DialogFooter
+            closeDialog={() => closeDialogWithResult(selectedAssets)}
+            selectedAssetCount={selectedAssets.length}
+          />
+        ) : null}
+      </div>
+    </div>
   );
-}
-
-const TableHeader = ({ children, className }: { children?: ReactNode; className?: string }) => {
-  return (
-    <th className={cn('w-[120px] border-r px-2 text-left text-xs font-medium text-slate-500', className)}>
-      {children}
-    </th>
-  );
-};
-
-const TableCell = ({ children, className }: { children?: ReactNode; className?: string }) => {
-  return (
-    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap px-2 text-m', className)}>
-      {children}
-    </td>
-  );
-};
-
-function SelectAssetButton({ onClick }: { onClick: () => void }) {
-  return <IconButton variant="ghost" variantColor="primary" icon={FieldRelation} onClick={onClick} />;
 }
 
 function DialogHeader() {
@@ -297,11 +316,3 @@ function DialogFooter({ closeDialog, selectedAssetCount }: { closeDialog: () => 
     </div>
   );
 }
-
-const getResizedHygraphUrl = (url: string, handle: string) => {
-  return url.slice(0, -handle.length) + 'output=format:jpg/resize=width:59,height:59,fit:crop/' + handle;
-};
-
-const formatDate = (date: Date) => {
-  return `${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`;
-};

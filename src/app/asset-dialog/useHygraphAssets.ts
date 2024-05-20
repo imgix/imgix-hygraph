@@ -14,11 +14,11 @@ export type HygraphAsset = {
   mimeType: string;
   url: string;
   createdBy: {
-    picture: string;
+    picture?: string;
     name: string;
   };
   updatedBy: {
-    picture: string;
+    picture?: string;
     name: string;
   };
 };
