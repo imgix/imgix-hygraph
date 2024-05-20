@@ -1,23 +1,39 @@
 'use client';
 
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
-import { useAppConfig } from '@/hooks/useAppConfig';
-import { Box, Button, Input, Label } from '@hygraph/baukasten';
+import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
+import { Button, Input } from '@hygraph/baukasten';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import HygraphIcon from '../../../public/hygraph-icon.svg';
 import ImgixIcon from '../../../public/imgix-icon.png';
+import { Select } from '@headlessui/react';
 
 const SetupPage = () => {
   const config = useAppConfig();
   const { t } = useTranslation();
 
   const [imgixBase, setImgixBase] = useState(config.imgixBase);
+  const [imgixToken, setImgixToken] = useState(config.imgixToken);
+  const [imgixSourceId, setImgixSourceId] = useState(config.imgixSourceId);
+  const [imgixSourceType, setImgixSourceType] = useState(config.imgixSourceType);
 
-  const { isUpdatingConfig, updateConfig } = useUpdateAppConfig({ imgixBase });
+  const appConfig = {
+    imgixBase,
+    imgixToken,
+    imgixSourceId,
+    imgixSourceType
+  };
 
-  const isButtonDisabled = !imgixBase;
+  const { isUpdatingConfig, updateConfig } = useUpdateAppConfig(appConfig);
+
+  const isConfigValid = useMemo(() => {
+    const { success } = configSchema.safeParse(appConfig);
+    return success;
+  }, [imgixBase, imgixToken]);
+
+  const isButtonDisabled = !isConfigValid;
 
   return (
     <div className="max-w-md space-y-24">
@@ -32,13 +48,49 @@ const SetupPage = () => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm">{t('setup.apiLabel')}</label>
-        <Input value={imgixBase} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixBase(e.target.value)} />
+        <label className="text-sm">
+          <p>{t('setup.baseUrlLabel')}</p>
+          <p className="text-xs text-slate-500">{t('setup.requiredField')}</p>
+        </label>
+        <Input
+          value={imgixBase}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixBase(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm">{t('setup.apiKeyLabel')}</label>
+        <Input
+          value={imgixToken}
+          type="password"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixToken(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm">{t('setup.sourceIdLabel')}</label>
+        <Input
+          value={imgixSourceId}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixSourceId(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm">{t('setup.sourceTypeLabel')}</label>
+        <Select
+          value={imgixSourceType}
+          onChange={(e) => setImgixSourceType(e.target.value as 'webfolder' | 'other')}
+          className="h-10 w-full rounded-sm border border-slate-300 px-3 text-black"
+        >
+          <option value="webfolder">Webfolder</option>
+          <option value="other">Other</option>
+        </Select>
       </div>
 
       <Button
         size="large"
-        onClick={() => updateConfig({ imgixBase })}
+        onClick={() => updateConfig(appConfig)}
         disabled={isButtonDisabled || isUpdatingConfig}
         loading={isUpdatingConfig}
         loadingText={t('setup.saveButtonLoadingLabel')}

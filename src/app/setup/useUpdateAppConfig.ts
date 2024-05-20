@@ -4,7 +4,7 @@ import { useToast } from '@hygraph/baukasten';
 import { useTranslation } from 'react-i18next';
 import { AppConfig } from '@/hooks/useAppConfig';
 
-const useUpdateAppConfig = ({ imgixBase }: AppConfig) => {
+const useUpdateAppConfig = (appConfig: AppConfig) => {
   const app = useApp();
   const { t } = useTranslation();
   const showToast = useToast();
@@ -12,9 +12,7 @@ const useUpdateAppConfig = ({ imgixBase }: AppConfig) => {
   const mutationFn = (appConfig: AppConfig) =>
     app.updateInstallation({
       status: 'COMPLETED',
-      config: {
-        imgixBase: appConfig.imgixBase
-      }
+      config: appConfig
     });
 
   const { mutate, isPending } = useMutation({
@@ -25,7 +23,7 @@ const useUpdateAppConfig = ({ imgixBase }: AppConfig) => {
         title: t('setup.errorToast.title'),
         description: `${t('setup.errorToast.description')} ${error.message}`,
         actionBtnTitle: t('setup.errorToast.actionBtnTitle'),
-        onClick: () => mutate({ imgixBase })
+        onClick: () => mutate(appConfig)
       });
     }
   });
