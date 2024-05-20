@@ -4,8 +4,8 @@ import { IconButton, Pill } from '@hygraph/baukasten';
 import { FieldRelation } from '@hygraph/icons';
 import prettyBytes from 'pretty-bytes';
 import { type ReactNode } from 'react';
-import { HygraphAsset } from '../useHygraphAssets';
 import { User } from './user';
+import { Asset } from '@/types';
 
 export function AssetTable({
   removeFromSelection,
@@ -15,12 +15,12 @@ export function AssetTable({
   isSingleSelect,
   addToSelection
 }: {
-  removeFromSelection: (removedAssets: HygraphAsset[]) => void;
-  onSelect: (asset: HygraphAsset) => void;
-  assets: HygraphAsset[];
-  selectedAssets: HygraphAsset[];
+  removeFromSelection: (removedAssets: Asset[]) => void;
+  onSelect: (asset: Asset) => void;
+  assets: Asset[];
+  selectedAssets: Asset[];
   isSingleSelect: boolean;
-  addToSelection: (addedAssets: HygraphAsset[]) => void;
+  addToSelection: (addedAssets: Asset[]) => void;
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
@@ -87,34 +87,31 @@ export function AssetTable({
               <TableCell className="min-w-[130px]"></TableCell>
               <TableCell className="min-w-[80px]">
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <img
-                  src={getResizedHygraphUrl(asset.url, asset.handle)}
-                  className="max-h-[60px] w-[80px] object-cover"
-                />
+                <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
               </TableCell>
               <TableCell>
                 <Pill maxWidth={110} size="24">
                   {asset.id}
                 </Pill>
               </TableCell>
-              <TableCell>{formatDate(new Date(asset.createdAt))}</TableCell>
+              <TableCell>{formatDate(asset.createdAt)}</TableCell>
               <TableCell>
-                <User name={asset.createdBy.name} picture={asset.createdBy.picture} />
+                {asset.createdBy ? <User name={asset.createdBy.name} picture={asset.createdBy.picture} /> : <p>-</p>}
               </TableCell>
-              <TableCell>{formatDate(new Date(asset.updatedAt))}</TableCell>
+              <TableCell>{asset.updatedAt ? formatDate(asset.updatedAt) : '-'}</TableCell>
               <TableCell>
-                <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} />
+                {asset.updatedBy ? <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} /> : '-'}
               </TableCell>
               <TableCell>{asset.handle}</TableCell>
               <TableCell>{asset.fileName}</TableCell>
               <TableCell>
-                <pre>{asset.height}</pre>
+                <pre>{asset.height ?? '-'}</pre>
               </TableCell>
               <TableCell>
-                <pre>{asset.width}</pre>
+                <pre>{asset.width ?? '-'}</pre>
               </TableCell>
               <TableCell>
-                <pre>{prettyBytes(asset.size)}</pre>
+                <pre>{prettyBytes(asset.fileSize)}</pre>
               </TableCell>
               <TableCell>{asset.mimeType}</TableCell>
             </tr>
@@ -144,10 +141,6 @@ const TableCell = ({ children, className }: { children?: ReactNode; className?: 
 function SelectAssetButton({ onClick }: { onClick: () => void }) {
   return <IconButton variant="ghost" variantColor="primary" icon={FieldRelation} onClick={onClick} />;
 }
-
-const getResizedHygraphUrl = (url: string, handle: string) => {
-  return url.slice(0, -handle.length) + 'output=format:jpg/resize=width:59,height:59,fit:crop/' + handle;
-};
 
 const formatDate = (date: Date) => {
   return `${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`;

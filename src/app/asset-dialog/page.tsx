@@ -1,19 +1,21 @@
 'use client';
 
+import { type AppConfig } from '@/hooks/useAppConfig';
+import { Asset } from '@/types';
+import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
 import { Box, Button, Divider, Heading, Progress } from '@hygraph/baukasten';
 import { useState } from 'react';
 import { uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
-import { HygraphAsset, useHygraphAssets } from './useHygraphAssets';
-import AttachmentIcon from '/public/icons/attachment.svg';
+import { useHygraphAssets } from './useHygraphAssets';
 import { useImgixAssets } from './useImgixAssets';
-import { type AppConfig } from '@/hooks/useAppConfig';
+import AttachmentIcon from '/public/icons/attachment.svg';
 
 export default function AssetDialog() {
   const { configuration } = useUiExtensionDialog<
-    HygraphAsset[],
+    Asset[],
     {
       configuration: AppConfig;
     }
@@ -35,7 +37,7 @@ function HygraphAssetDialog() {
     context,
     excludedAssets
   } = useUiExtensionDialog<
-    HygraphAsset[],
+    Asset[],
     {
       isSingleSelect: boolean;
       excludedAssets: string[];
@@ -43,9 +45,9 @@ function HygraphAssetDialog() {
     }
   >();
 
-  const [selectedAssets, setSelectedAssets] = useState<HygraphAsset[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
-  const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<HygraphAsset[]>([]);
+  const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
 
   const [resultsPerPage, setResultsPerPage] = useState(25);
   const [page, setPage] = useState(1);
@@ -59,11 +61,11 @@ function HygraphAssetDialog() {
     excludedIds: excludedAssets
   });
 
-  const addToSelection = (addedAssets: HygraphAsset[]) => {
+  const addToSelection = (addedAssets: Asset[]) => {
     setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
   };
 
-  const removeFromSelection = (removedAssets: HygraphAsset[]) => {
+  const removeFromSelection = (removedAssets: Asset[]) => {
     setSelectedAssets((assets) =>
       assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
     );
@@ -73,7 +75,7 @@ function HygraphAssetDialog() {
     setSelectedAssets([]);
   };
 
-  const onSelect = (asset: HygraphAsset) => {
+  const onSelect = (asset: Asset) => {
     if (isSingleSelect) {
       return closeDialogWithResult([asset]);
     }
@@ -81,7 +83,9 @@ function HygraphAssetDialog() {
     addToSelection([asset]);
   };
 
-  const isLoading = assetsQuery.isLoading || !assetsQuery.data;
+  const assets = assetsQuery?.data?.assets.map(hygraphAssetToAsset);
+
+  const isLoading = assetsQuery.isLoading || !assets;
 
   return (
     <div className="h-[48rem]">
@@ -124,7 +128,7 @@ function HygraphAssetDialog() {
             <AssetTable
               removeFromSelection={removeFromSelection}
               onSelect={onSelect}
-              assets={assetsQuery.data.assets}
+              assets={assets}
               selectedAssets={selectedAssets}
               isSingleSelect={isSingleSelect}
               addToSelection={addToSelection}
@@ -140,12 +144,11 @@ function HygraphAssetDialog() {
           totalItems={assetsQuery.data?.totalAssetCount ?? 0}
         />
 
-        {!isSingleSelect ? (
-          <DialogFooter
-            closeDialog={() => closeDialogWithResult(selectedAssets)}
-            selectedAssetCount={selectedAssets.length}
-          />
-        ) : null}
+        <DialogFooter
+          isSingleSelect={isSingleSelect}
+          closeDialog={() => closeDialogWithResult(selectedAssets)}
+          selectedAssetCount={selectedAssets.length}
+        />
       </div>
     </div>
   );
@@ -157,7 +160,7 @@ function ImgixAssetDialog() {
     isSingleSelect,
     configuration
   } = useUiExtensionDialog<
-    HygraphAsset[],
+    Asset[],
     {
       isSingleSelect: boolean;
       excludedAssets: string[];
@@ -165,9 +168,7 @@ function ImgixAssetDialog() {
     }
   >();
 
-  const [selectedAssets, setSelectedAssets] = useState<HygraphAsset[]>([]);
-  const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
-  const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<HygraphAsset[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
 
   const [resultsPerPage, setResultsPerPage] = useState(25);
   const [page, setPage] = useState(1);
@@ -179,11 +180,11 @@ function ImgixAssetDialog() {
     sourceId: configuration.imgixSourceId
   });
 
-  const addToSelection = (addedAssets: HygraphAsset[]) => {
+  const addToSelection = (addedAssets: Asset[]) => {
     setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
   };
 
-  const removeFromSelection = (removedAssets: HygraphAsset[]) => {
+  const removeFromSelection = (removedAssets: Asset[]) => {
     setSelectedAssets((assets) =>
       assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
     );
@@ -193,7 +194,7 @@ function ImgixAssetDialog() {
     setSelectedAssets([]);
   };
 
-  const onSelect = (asset: HygraphAsset) => {
+  const onSelect = (asset: Asset) => {
     if (isSingleSelect) {
       return closeDialogWithResult([asset]);
     }
@@ -201,29 +202,9 @@ function ImgixAssetDialog() {
     addToSelection([asset]);
   };
 
-  const isLoading = assetsQuery.isLoading || !assetsQuery.data;
+  const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
 
-  const assets = assetsQuery.data?.assets.map((asset): HygraphAsset => {
-    return {
-      createdAt: new Date(asset.attributes.date_created * 1000).toISOString(),
-      createdBy: {
-        name: asset.attributes.uploaded_by ?? ''
-      },
-      fileName: asset.attributes.origin_path.split('/').pop()!,
-      size: asset.attributes.file_size,
-      width: asset.attributes.media_width,
-      height: asset.attributes.media_height,
-      url: asset.attributes.origin_path,
-      id: asset.id,
-      handle: asset.attributes.origin_path,
-      mimeType: asset.attributes.content_type,
-      stage: 'published',
-      updatedAt: new Date(asset.attributes.date_modified * 1000).toISOString(),
-      updatedBy: {
-        name: ''
-      }
-    };
-  });
+  const isLoading = assetsQuery.isLoading || !assets;
 
   return (
     <div className="h-[48rem]">
@@ -240,21 +221,6 @@ function ImgixAssetDialog() {
               Clear selection
             </Button>
           ) : null}
-
-          {selectedAssets.length > 0 || showOnlySelectedAssets ? (
-            <Button
-              variant="ghost"
-              variantColor="secondary"
-              size="small"
-              onClick={() => {
-                setSelectedAssetsSnapshot(selectedAssets);
-                setPage(1);
-                setShowOnlySelectedAssets(!showOnlySelectedAssets);
-              }}
-            >
-              {showOnlySelectedAssets ? 'Show all entries' : 'Show selected entries'}
-            </Button>
-          ) : null}
         </Box>
 
         <Divider margin="0" />
@@ -266,7 +232,7 @@ function ImgixAssetDialog() {
             <AssetTable
               removeFromSelection={removeFromSelection}
               onSelect={onSelect}
-              assets={assets!}
+              assets={assets}
               selectedAssets={selectedAssets}
               isSingleSelect={isSingleSelect}
               addToSelection={addToSelection}
@@ -282,12 +248,11 @@ function ImgixAssetDialog() {
           totalItems={assetsQuery.data?.totalAssetCount ?? 0}
         />
 
-        {!isSingleSelect ? (
-          <DialogFooter
-            closeDialog={() => closeDialogWithResult(selectedAssets)}
-            selectedAssetCount={selectedAssets.length}
-          />
-        ) : null}
+        <DialogFooter
+          isSingleSelect={isSingleSelect}
+          closeDialog={() => closeDialogWithResult(selectedAssets)}
+          selectedAssetCount={selectedAssets.length}
+        />
       </div>
     </div>
   );
@@ -304,15 +269,23 @@ function DialogHeader() {
   );
 }
 
-function DialogFooter({ closeDialog, selectedAssetCount }: { closeDialog: () => void; selectedAssetCount: number }) {
+function DialogFooter({
+  closeDialog,
+  selectedAssetCount,
+  isSingleSelect
+}: {
+  closeDialog: () => void;
+  selectedAssetCount: number;
+  isSingleSelect: boolean;
+}) {
   const showAssetCount = selectedAssetCount > 1;
   const allowSubmit = selectedAssetCount > 0;
 
-  return (
+  return !isSingleSelect ? (
     <div className="flex justify-end rounded-b-lg bg-brand-50 px-24 py-16">
       <Button onClick={closeDialog} size="large" disabled={!allowSubmit}>
         Add selected assets {showAssetCount ? `(${selectedAssetCount})` : ''}
       </Button>
     </div>
-  );
+  ) : null;
 }

@@ -4,17 +4,17 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { DraggableAssetCardContainer } from '@/app/asset-field/components/DraggableAssetCardContainer/DraggableAssetCardContainer';
 import { AssetCard } from '@/app/asset-field/components/AssetCard/AssetCard';
 import { DragEndEvent } from '@dnd-kit/core/dist/types/events';
-import { ImgixAsset } from '../../page';
+import { Asset } from '@/types';
 
 interface AssetCardListProps {
-  assets: ImgixAsset[];
+  assets: Asset[];
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd: (event: DragEndEvent) => void;
   isDraggingDisabled: boolean;
 }
 
 interface AssetCardWrapperProps {
-  assets: ImgixAsset[];
+  assets: Asset[];
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd?: (event: DragEndEvent) => void;
 }

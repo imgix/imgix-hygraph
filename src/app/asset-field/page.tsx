@@ -16,16 +16,11 @@ import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ContentTableCell } from './components/ContentTableCell/ContentTableCell';
+import { Asset } from '@/types';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
 const DIALOG_MAX_WIDTH = 'calc(100vw - 160px)';
-
-export type ImgixAsset = {
-  url: string;
-  handle: string;
-  id: string;
-};
 
 const AssetField = () => {
   const { t } = useTranslation();
@@ -37,6 +32,7 @@ const AssetField = () => {
     field: { isList },
     isTableCell
   } = useFieldExtension();
+
   const [assets, setAssets] = useState(() => getInitialAssetsValue(value));
 
   useEffect(() => {
@@ -49,13 +45,11 @@ const AssetField = () => {
       return;
     }
     if (isList) {
-      onChange(
-        assets.map((asset) => ({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id, handle: asset.handle }))
-      );
+      onChange(assets.map((asset) => ({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id })));
       return;
     }
     const asset = assets[0];
-    onChange({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id, handle: asset.handle });
+    onChange({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id });
   }, [assets, isList]);
 
   const handleOpenPreviewDialog = () => {
@@ -126,7 +120,7 @@ const AssetField = () => {
   );
 };
 
-const getInitialAssetsValue = (value: Nullable<ImgixAsset | ImgixAsset[]>) => {
+const getInitialAssetsValue = (value: Nullable<Asset | Asset[]>) => {
   const fieldValue = isEmpty(value) ? null : value;
 
   if (Array.isArray(fieldValue)) {

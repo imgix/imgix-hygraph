@@ -1,24 +1,5 @@
+import { ImgixAsset } from '@/types';
 import { useQuery } from '@tanstack/react-query';
-
-export type ImgixAsset = {
-  id: string;
-  attributes: {
-    content_type: string;
-    date_created: number;
-    date_modified: number;
-    uploaded_by: string;
-    description: string;
-    dpi_height: number;
-    dpi_width: number;
-    face_count: number;
-    file_size: number;
-    media_kind: string;
-    media_height: number;
-    media_width: number;
-    name: string;
-    origin_path: string;
-  };
-};
 
 type ImgixAssetsResponse = {
   data: ImgixAsset[];

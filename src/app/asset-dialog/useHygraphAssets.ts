@@ -1,27 +1,6 @@
+import { HygraphAsset } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { gql, request } from 'graphql-request';
-
-export type HygraphAsset = {
-  createdAt: string;
-  fileName: string;
-  handle: string;
-  height: number;
-  id: string;
-  size: number;
-  stage: string;
-  updatedAt: string;
-  width: number;
-  mimeType: string;
-  url: string;
-  createdBy: {
-    picture?: string;
-    name: string;
-  };
-  updatedBy: {
-    picture?: string;
-    name: string;
-  };
-};
 
 type Data = {
   assetsConnection: {
