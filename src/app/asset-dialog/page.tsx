@@ -32,25 +32,23 @@ export default function AssetDialog() {
 
 function HygraphAssetDialog() {
   const {
-    onCloseDialog: closeDialogWithResult,
+    closeDialogWithResult,
     isSingleSelect,
     context,
-    excludedAssets
-  } = useUiExtensionDialog<
-    Asset[],
-    {
-      isSingleSelect: boolean;
-      excludedAssets: string[];
-      context: { environment: { authToken: string; endpoint: string } };
-    }
-  >();
+    excludedAssets,
+    selectedAssets,
+    addToSelection,
+    onSelect,
+    clearSelection,
+    removeFromSelection,
+    resultsPerPage,
+    page,
+    setResultsPerPage,
+    setPage
+  } = useAssetDialog();
 
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
   const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
-
-  const [resultsPerPage, setResultsPerPage] = useState(25);
-  const [page, setPage] = useState(1);
 
   const assetsQuery = useHygraphAssets({
     apiBase: context.environment.endpoint,
@@ -61,30 +59,7 @@ function HygraphAssetDialog() {
     excludedIds: excludedAssets
   });
 
-  const addToSelection = (addedAssets: Asset[]) => {
-    setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
-  };
-
-  const removeFromSelection = (removedAssets: Asset[]) => {
-    setSelectedAssets((assets) =>
-      assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
-    );
-  };
-
-  const clearSelection = () => {
-    setSelectedAssets([]);
-  };
-
-  const onSelect = (asset: Asset) => {
-    if (isSingleSelect) {
-      return closeDialogWithResult([asset]);
-    }
-
-    addToSelection([asset]);
-  };
-
   const assets = assetsQuery?.data?.assets.map(hygraphAssetToAsset);
-
   const isLoading = assetsQuery.isLoading || !assets;
 
   return (
@@ -156,22 +131,19 @@ function HygraphAssetDialog() {
 
 function ImgixAssetDialog() {
   const {
-    onCloseDialog: closeDialogWithResult,
+    closeDialogWithResult,
     isSingleSelect,
-    configuration
-  } = useUiExtensionDialog<
-    Asset[],
-    {
-      isSingleSelect: boolean;
-      excludedAssets: string[];
-      configuration: AppConfig;
-    }
-  >();
-
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
-
-  const [resultsPerPage, setResultsPerPage] = useState(25);
-  const [page, setPage] = useState(1);
+    configuration,
+    selectedAssets,
+    addToSelection,
+    onSelect,
+    clearSelection,
+    removeFromSelection,
+    page,
+    resultsPerPage,
+    setResultsPerPage,
+    setPage
+  } = useAssetDialog();
 
   const assetsQuery = useImgixAssets({
     apiKey: configuration.imgixToken,
@@ -180,30 +152,7 @@ function ImgixAssetDialog() {
     sourceId: configuration.imgixSourceId
   });
 
-  const addToSelection = (addedAssets: Asset[]) => {
-    setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
-  };
-
-  const removeFromSelection = (removedAssets: Asset[]) => {
-    setSelectedAssets((assets) =>
-      assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
-    );
-  };
-
-  const clearSelection = () => {
-    setSelectedAssets([]);
-  };
-
-  const onSelect = (asset: Asset) => {
-    if (isSingleSelect) {
-      return closeDialogWithResult([asset]);
-    }
-
-    addToSelection([asset]);
-  };
-
   const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
-
   const isLoading = assetsQuery.isLoading || !assets;
 
   return (
@@ -289,3 +238,56 @@ function DialogFooter({
     </div>
   ) : null;
 }
+
+const useAssetDialog = () => {
+  const { onCloseDialog, isSingleSelect, ...rest } = useUiExtensionDialog<
+    Asset[],
+    {
+      isSingleSelect: boolean;
+      excludedAssets: string[];
+      context: { environment: { authToken: string; endpoint: string } };
+      configuration: AppConfig;
+    }
+  >();
+
+  const [resultsPerPage, setResultsPerPage] = useState(25);
+  const [page, setPage] = useState(1);
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
+
+  const addToSelection = (addedAssets: Asset[]) => {
+    setSelectedAssets((assets) => uniqueBy([...assets, ...addedAssets], (asset) => asset.id));
+  };
+
+  const removeFromSelection = (removedAssets: Asset[]) => {
+    setSelectedAssets((assets) =>
+      assets.filter((selectedAsset) => !removedAssets.some((removedAsset) => removedAsset.id === selectedAsset.id))
+    );
+  };
+
+  const clearSelection = () => {
+    setSelectedAssets([]);
+  };
+
+  const onSelect = (asset: Asset) => {
+    if (isSingleSelect) {
+      return onCloseDialog([asset]);
+    }
+
+    addToSelection([asset]);
+  };
+
+  return {
+    selectedAssets,
+    addToSelection,
+    removeFromSelection,
+    clearSelection,
+    onSelect,
+    setResultsPerPage,
+    setPage,
+    resultsPerPage,
+    page,
+    closeDialogWithResult: onCloseDialog,
+    isSingleSelect: isSingleSelect,
+    ...rest
+  };
+};
