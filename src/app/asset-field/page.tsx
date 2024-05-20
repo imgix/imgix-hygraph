@@ -35,22 +35,30 @@ const AssetField = () => {
 
   const [assets, setAssets] = useState(() => getInitialAssetsValue(value));
 
+  const updateAssets = (assets: Asset[]) => {
+    const assetToJsonField = (asset: Asset) => ({
+      url: `${config.imgixBase}/${asset.handle}`,
+      id: asset.id
+    });
+
+    if (assets.length === 0) {
+      return onChange(null);
+    }
+
+    if (isList) {
+      setAssets(assets);
+      onChange(assets.map(assetToJsonField));
+      return;
+    }
+
+    setAssets(assets);
+    onChange(assetToJsonField(assets[0]));
+  };
+
+  // Handles "Clear"/"Clear all" button
   useEffect(() => {
     if (value === null) setAssets([]);
   }, [value]);
-
-  useEffect(() => {
-    if (!assets[0]) {
-      onChange(null);
-      return;
-    }
-    if (isList) {
-      onChange(assets.map((asset) => ({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id })));
-      return;
-    }
-    const asset = assets[0];
-    onChange({ url: `${config.imgixBase}/${asset.handle}`, id: asset.id });
-  }, [assets, isList]);
 
   const handleOpenPreviewDialog = () => {
     openDialog(ASSETS_PREVIEW_DIALOG_ROUTE, {
@@ -71,13 +79,12 @@ const AssetField = () => {
       if (!newItems) return;
 
       if (!isList) {
-        setAssets(newItems);
+        updateAssets(newItems);
         return;
       }
 
       const newAssets = Array.isArray(newItems) ? newItems : [newItems];
-
-      setAssets((prevAssets) => [...prevAssets, ...newAssets]);
+      updateAssets([...assets, ...newAssets]);
     });
   };
 
