@@ -10,14 +10,14 @@ import { ComponentType } from 'react';
 
 import { AssetCardList } from '@/app/asset-field/components/AssetCardList/AssetCardList';
 import { useAppConfig } from '@/hooks/useAppConfig';
+import { Asset, StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
 import { useFieldExtension } from '@hygraph/app-sdk-react';
 import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { pick, uniqueBy } from 'remeda';
 import { ContentTableCell } from './components/ContentTableCell/ContentTableCell';
-import { Asset, StoredAsset } from '@/types';
-import { pick } from 'remeda';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
@@ -39,8 +39,9 @@ const AssetField = () => {
   const setAssets = (fn: (assets: StoredAsset[]) => StoredAsset[]) => {
     _setAssets((assets) => {
       const newAssets = fn(assets);
-      onChange(isList ? newAssets : newAssets[0]);
-      return newAssets;
+      const deduped = uniqueBy(newAssets, (asset) => asset.id);
+      onChange(isList ? deduped : deduped[0]);
+      return deduped;
     });
   };
 
