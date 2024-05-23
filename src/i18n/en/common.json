@@ -3,25 +3,19 @@
     "assetThumbnailAlt": "Asset thumbnail"
   },
   "setup": {
-    "clientIdLabel": "Client ID",
-    "clientSecretLabel": "Client secret",
-    "usernameLabel": "Username",
-    "passwordLabel": "Password",
+    "description": "This app allows you to easily use imgix assets in Hygraph. Please provide the following details to get started:",
     "baseUrlLabel": "imgix source URL",
     "apiKeyLabel": "imgix API key",
     "sourceIdLabel": "imgix source ID",
     "saveButtonLabel": "Save config",
     "saveButtonLoadingLabel": "Saving...",
     "sourceTypeLabel": "imgix source type",
-    "pimUrlLabel": "PIM URL",
-    "invalidCredentials": "Invalid credentials",
     "requiredField": "Required",
     "errorToast": {
       "title": "Error",
       "description": "An error occurred:",
       "actionBtnTitle": "Try again"
-    },
-    "description": "This app allows you to easily use imgix assets in Hygraph. Please provide the following details to get started:"
+    }
   },
   "assetPicker": {
     "addAssetButtonLabel": "Add asset",
