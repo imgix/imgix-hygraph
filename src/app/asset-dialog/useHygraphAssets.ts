@@ -17,7 +17,7 @@ type Data = {
   };
 };
 
-const query = gql`
+const document = gql`
   query Assets($first: Int!, $skip: Int!, $where: AssetWhereInput!) {
     assetsConnection(first: $first, skip: $skip, where: $where) {
       edges {
@@ -60,7 +60,8 @@ export const useHygraphAssets = ({
   resultsPerPage,
   pageNumber,
   includedIds,
-  excludedIds
+  excludedIds,
+  query
 }: {
   apiBase: string;
   authToken: string;
@@ -68,22 +69,24 @@ export const useHygraphAssets = ({
   pageNumber: number;
   includedIds?: string[];
   excludedIds: string[];
+  query?: string;
 }) => {
   const first = resultsPerPage;
   const skip = resultsPerPage * (pageNumber - 1);
 
   const assets = useQuery({
-    queryKey: ['assets', { skip, first, excludedIds, includedIds }],
+    queryKey: ['assets', { skip, first, excludedIds, includedIds, query }],
     queryFn: async () => {
       const data = await request<Data>({
         url: apiBase,
-        document: query,
+        document: document,
         variables: {
           first,
           skip,
           where: {
             id_not_in: excludedIds,
-            id_in: includedIds
+            id_in: includedIds,
+            _search: query
           }
         },
         requestHeaders: {

@@ -13,6 +13,7 @@ import { Pagination } from './components/pagination';
 import { useHygraphAssets } from './useHygraphAssets';
 import { useImgixAssets } from './useImgixAssets';
 import FieldAssetIcon from '/public/icons/field-asset.svg';
+import { Input } from '@/components/input';
 
 export default function AssetDialog() {
   const { configuration } = useUiExtensionDialog<
@@ -49,6 +50,7 @@ function HygraphAssetDialog() {
     configuration
   } = useAssetDialog();
 
+  const [query, setQuery] = useState('');
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
   const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
 
@@ -58,7 +60,8 @@ function HygraphAssetDialog() {
     resultsPerPage: resultsPerPage,
     pageNumber: page,
     includedIds: showOnlySelectedAssets ? selectedAssetsSnapshot.map((asset) => asset.id) : undefined,
-    excludedIds: excludedAssets
+    excludedIds: excludedAssets,
+    query: query
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => hygraphAssetToAsset(asset, configuration.imgixBase));
@@ -66,8 +69,17 @@ function HygraphAssetDialog() {
 
   return (
     <div className="h-[48rem]">
-      <div className="grid h-full grid-rows-[auto_auto_1fr_auto_auto]">
+      <div className="grid h-full grid-rows-[repeat(3,auto)_1fr_auto_auto]">
         <DialogHeader />
+
+        <div className="px-24 py-8">
+          <Input
+            className="max-w-[250px]"
+            placeholder="Search for any item..."
+            value={query}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+          />
+        </div>
 
         <div className="flex space-x-2 border-b px-24 py-2 text-m">
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
@@ -142,11 +154,14 @@ function ImgixAssetDialog() {
     setPage
   } = useAssetDialog();
 
+  const [query, setQuery] = useState('');
+
   const assetsQuery = useImgixAssets({
     apiKey: configuration.imgixToken,
     pageNumber: page,
     resultsPerPage: resultsPerPage,
-    sourceId: configuration.imgixSourceId
+    sourceId: configuration.imgixSourceId,
+    query: query
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
@@ -154,8 +169,17 @@ function ImgixAssetDialog() {
 
   return (
     <div className="h-[48rem]">
-      <div className="grid h-full grid-rows-[auto_auto_1fr_auto_auto]">
+      <div className="grid h-full grid-rows-[repeat(3,auto)_1fr_auto_auto]">
         <DialogHeader />
+
+        <div className="flex px-24 py-8">
+          <Input
+            className="max-w-[250px]"
+            placeholder="Search for any item..."
+            value={query}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+          />
+        </div>
 
         <div className="flex space-x-2 border-b px-24 py-2 text-m">
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
