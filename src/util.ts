@@ -7,7 +7,7 @@ export function cn(...args: ClassValue[]) {
   return twMerge(clsx(args));
 }
 
-export function hygraphAssetToAsset(asset: HygraphAsset): Asset {
+export function hygraphAssetToAsset(asset: HygraphAsset, sourceBaseUrl: string): Asset {
   const getResizedHygraphUrl = (url: string, handle: string) => {
     const urlBase = url.slice(0, -handle.length);
     const formatParams = 'output=format:jpg/resize=width:59,height:59,fit:crop/';
@@ -26,7 +26,7 @@ export function hygraphAssetToAsset(asset: HygraphAsset): Asset {
     width: asset.width,
     fileSize: asset.size,
     mimeType: asset.mimeType,
-    url: asset.url,
+    url: `${sourceBaseUrl}/${asset.handle}`,
     thumbnail: getResizedHygraphUrl(asset.url, asset.handle)
   };
 }

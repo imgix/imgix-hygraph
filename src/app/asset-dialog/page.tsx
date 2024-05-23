@@ -44,7 +44,8 @@ function HygraphAssetDialog() {
     resultsPerPage,
     page,
     setResultsPerPage,
-    setPage
+    setPage,
+    configuration
   } = useAssetDialog();
 
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
@@ -59,7 +60,7 @@ function HygraphAssetDialog() {
     excludedIds: excludedAssets
   });
 
-  const assets = assetsQuery?.data?.assets.map(hygraphAssetToAsset);
+  const assets = assetsQuery?.data?.assets.map((asset) => hygraphAssetToAsset(asset, configuration.imgixBase));
   const isLoading = assetsQuery.isLoading || !assets;
 
   return (
