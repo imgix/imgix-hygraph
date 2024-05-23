@@ -16,7 +16,8 @@ import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ContentTableCell } from './components/ContentTableCell/ContentTableCell';
-import { Asset } from '@/types';
+import { Asset, StoredAsset } from '@/types';
+import { pick } from 'remeda';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
@@ -35,11 +36,8 @@ const AssetField = () => {
 
   const [assets, setAssets] = useState(() => getInitialAssetsValue(value));
 
-  const updateAssets = (assets: Asset[]) => {
-    const assetToJsonField = (asset: Asset) => ({
-      url: `${config.imgixBase}/${asset.handle}`,
-      id: asset.id
-    });
+  const updateAssets = (assets: StoredAsset[]) => {
+    const transformAsset = (asset: StoredAsset) => pick(asset, ['url', 'id']);
 
     if (assets.length === 0) {
       return onChange(null);
@@ -47,12 +45,12 @@ const AssetField = () => {
 
     if (isList) {
       setAssets(assets);
-      onChange(assets.map(assetToJsonField));
+      onChange(assets.map(transformAsset));
       return;
     }
 
     setAssets(assets);
-    onChange(assetToJsonField(assets[0]));
+    onChange(transformAsset(assets[0]));
   };
 
   // Handles "Clear"/"Clear all" button
@@ -83,7 +81,7 @@ const AssetField = () => {
         return;
       }
 
-      const newAssets = Array.isArray(newItems) ? newItems : [newItems];
+      const newAssets: Asset[] = Array.isArray(newItems) ? newItems : [newItems];
       updateAssets([...assets, ...newAssets]);
     });
   };
@@ -127,7 +125,7 @@ const AssetField = () => {
   );
 };
 
-const getInitialAssetsValue = (value: Nullable<Asset | Asset[]>) => {
+const getInitialAssetsValue = (value: Nullable<StoredAsset | StoredAsset[]>) => {
   const fieldValue = isEmpty(value) ? null : value;
 
   if (Array.isArray(fieldValue)) {

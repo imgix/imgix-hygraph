@@ -4,20 +4,20 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { DraggableAssetCardContainer } from '@/app/asset-field/components/DraggableAssetCardContainer/DraggableAssetCardContainer';
 import { AssetCard } from '@/app/asset-field/components/AssetCard/AssetCard';
 import { DragEndEvent } from '@dnd-kit/core/dist/types/events';
-import { Asset } from '@/types';
+import { StoredAsset } from '@/types';
 
-interface AssetCardListProps {
-  assets: Asset[];
+type AssetCardListProps = {
+  assets: StoredAsset[];
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd: (event: DragEndEvent) => void;
   isDraggingDisabled: boolean;
-}
+};
 
-interface AssetCardWrapperProps {
-  assets: Asset[];
+type AssetCardWrapperProps = {
+  assets: StoredAsset[];
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd?: (event: DragEndEvent) => void;
-}
+};
 
 export const AssetCardList = ({
   assets,

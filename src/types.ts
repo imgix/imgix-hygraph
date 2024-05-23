@@ -56,3 +56,8 @@ export type Asset = {
   url: string;
   thumbnail: string;
 };
+
+export type StoredAsset = {
+  id: string;
+  url: string;
+};
