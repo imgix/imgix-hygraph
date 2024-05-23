@@ -14,6 +14,7 @@ import { useHygraphAssets } from './useHygraphAssets';
 import { useImgixAssets } from './useImgixAssets';
 import FieldAssetIcon from '/public/icons/field-asset.svg';
 import { Input } from '@/components/input';
+import { useDebounceValue } from 'usehooks-ts';
 
 export default function AssetDialog() {
   const { configuration } = useUiExtensionDialog<
@@ -51,6 +52,7 @@ function HygraphAssetDialog() {
   } = useAssetDialog();
 
   const [query, setQuery] = useState('');
+  const [debouncedQuery] = useDebounceValue(query, 250);
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
   const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
 
@@ -61,7 +63,7 @@ function HygraphAssetDialog() {
     pageNumber: page,
     includedIds: showOnlySelectedAssets ? selectedAssetsSnapshot.map((asset) => asset.id) : undefined,
     excludedIds: excludedAssets,
-    query: query
+    query: debouncedQuery
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => hygraphAssetToAsset(asset, configuration.imgixBase));
@@ -155,13 +157,14 @@ function ImgixAssetDialog() {
   } = useAssetDialog();
 
   const [query, setQuery] = useState('');
+  const [debouncedQuery] = useDebounceValue(query, 250);
 
   const assetsQuery = useImgixAssets({
     apiKey: configuration.imgixToken,
     pageNumber: page,
     resultsPerPage: resultsPerPage,
     sourceId: configuration.imgixSourceId,
-    query: query
+    query: debouncedQuery
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
