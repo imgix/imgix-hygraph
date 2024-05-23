@@ -4,12 +4,12 @@ import { Error404, FieldAsset, MoreFill } from '@hygraph/icons';
 import { useEffect, useState } from 'react';
 import { Nullable } from '@/types/common';
 import { t } from 'i18next';
-import { ImgixAsset } from '../../page';
 import { getResizedImgixUrl } from '../AssetCard/AssetCard';
+import { StoredAsset } from '@/types';
 
 export interface ContentTableCell {
   handleOpenPreviewDialog: () => void;
-  assets: ImgixAsset[];
+  assets: StoredAsset[];
 }
 
 const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCell) => {
@@ -37,7 +37,7 @@ const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCell)
   );
 };
 
-const ContentTableCellThumbnail = (asset: ImgixAsset) => {
+const ContentTableCellThumbnail = (asset: StoredAsset) => {
   const [isLoading, setIsLoading] = useState<Nullable<boolean>>(true);
 
   const { url } = asset;
