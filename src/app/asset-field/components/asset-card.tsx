@@ -2,7 +2,7 @@ import { Icon } from '@/types/common';
 import { Box, Card, Flex, IconButton } from '@hygraph/baukasten';
 import { Close, DragHandle, FieldAsset } from '@hygraph/icons';
 
-export type AssetCard = {
+type AssetCardProps = {
   dragHandleProps?: { [x: string]: Function };
   id: string;
   onRemoveItem: (id: string) => void;
@@ -12,7 +12,15 @@ export type AssetCard = {
   isDragging?: boolean;
 };
 
-const AssetCard = ({ dragHandleProps, onRemoveItem, name, id, isSingleAsset, imageUrl, isDragging }: AssetCard) => {
+export const AssetCard = ({
+  dragHandleProps,
+  onRemoveItem,
+  name,
+  id,
+  isSingleAsset,
+  imageUrl,
+  isDragging
+}: AssetCardProps) => {
   const setCursor = (isSingleAsset: boolean, isDragging: boolean | undefined) => {
     if (isSingleAsset) {
       return 'default';
@@ -67,5 +75,3 @@ export const getResizedImgixUrl = (url: string) => {
   });
   return url + '?' + params.toString();
 };
-
-export { AssetCard };

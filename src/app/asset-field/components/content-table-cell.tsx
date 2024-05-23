@@ -1,18 +1,16 @@
+import { StoredAsset } from '@/types';
 import { Box, Flex, Spinner } from '@hygraph/baukasten';
 import { Error404, FieldAsset, MoreFill } from '@hygraph/icons';
-
-import { useEffect, useState } from 'react';
-import { Nullable } from '@/types/common';
 import { t } from 'i18next';
+import { useEffect, useState } from 'react';
 import { getResizedImgixUrl } from './asset-card';
-import { StoredAsset } from '@/types';
 
-export interface ContentTableCell {
+type ContentTableCellProps = {
   handleOpenPreviewDialog: () => void;
   assets: StoredAsset[];
-}
+};
 
-const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCell) => {
+export const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCellProps) => {
   return (
     <Flex flexDirection="row" maxHeight="60px" gap={8} cursor="pointer" onClick={handleOpenPreviewDialog}>
       {assets.slice(0, 3).map((asset) => (
@@ -38,40 +36,32 @@ const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCell)
 };
 
 const ContentTableCellThumbnail = (asset: StoredAsset) => {
-  const [isLoading, setIsLoading] = useState<Nullable<boolean>>(true);
-
-  const { url } = asset;
+  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
 
   useEffect(() => {
     const image = new Image();
-    image.src = url;
-    image.onload = () => {
-      setIsLoading(false);
-    };
-    image.onerror = () => {
-      setIsLoading(null);
-    };
-  }, [url]);
+    image.src = asset.url;
+    image.onload = () => setStatus('success');
+    image.onerror = () => setStatus('error');
+  }, [asset.url]);
 
-  if (isLoading) {
+  if (status === 'loading') {
     return <Spinner size="spinner.xs" />;
   }
 
-  if (isLoading === null) {
+  if (status === 'error') {
     return <Box as={Error404} color="neutral.200" width={40} height={40} />;
   }
 
-  if (url) {
+  if (status === 'success') {
     return (
       <img
-        src={getResizedImgixUrl(url)}
+        src={getResizedImgixUrl(asset.url)}
         alt={t('general.assetThumbnailAlt')}
-        className="h-full w-full object-cover pt-1 text-transparent"
+        className="h-[60px] w-[60px] object-cover object-center"
       />
     );
   }
 
   return <Box as={FieldAsset} color="neutral.200" width={40} height={40} />;
 };
-
-export { ContentTableCell };
