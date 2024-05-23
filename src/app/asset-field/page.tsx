@@ -21,7 +21,7 @@ import { pick } from 'remeda';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
-const DIALOG_MAX_WIDTH = 'calc(100vw - 160px)';
+const DIALOG_MAX_WIDTH = 'min(calc(100vw - 160px), 1280px)';
 
 const AssetField = () => {
   const { t } = useTranslation();
