@@ -21,7 +21,7 @@ export default function AssetDialog() {
     }
   >();
 
-  if (configuration.imgixSourceType === 'webfolder') {
+  if (configuration.imgixSourceType === 'hygraph-webfolder') {
     return <HygraphAssetDialog />;
   }
 

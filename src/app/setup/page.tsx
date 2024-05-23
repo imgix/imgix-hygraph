@@ -2,13 +2,14 @@
 
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
 import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
-import { Button, Input } from '@hygraph/baukasten';
+import { Select } from '@headlessui/react';
+import { Box, Button, Input } from '@hygraph/baukasten';
+import { ExternalLink } from '@hygraph/icons';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import HygraphIcon from '../../../public/hygraph-icon.svg';
 import ImgixIcon from '../../../public/imgix-icon.png';
-import { Select } from '@headlessui/react';
 
 const SetupPage = () => {
   const config = useAppConfig();
@@ -49,7 +50,27 @@ const SetupPage = () => {
 
       <div className="space-y-1">
         <label className="text-sm">
-          <p>{t('setup.baseUrlLabel')}</p>
+          <p>{t('setup.sourceType.label')}</p>
+          <p className="flex text-xs text-slate-500">
+            <a href="https://docs.imgix.com/setup/creating-sources" target="_blank" rel="noreferrer">
+              <span>{t('setup.sourceType.hint')}</span>
+              <Box as={ExternalLink} className="ml-1 h-4 w-4" />
+            </a>
+          </p>
+        </label>
+        <Select
+          value={imgixSourceType}
+          onChange={(e) => setImgixSourceType(e.target.value as 'hygraph-webfolder' | 'other')}
+          className="h-10 w-full rounded-sm border border-slate-300 px-3 text-black"
+        >
+          <option value="hygraph-webfolder">Webfolder</option>
+          <option value="other">Other</option>
+        </Select>
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-sm">
+          <p>{t('setup.baseUrl.label')}</p>
           <p className="text-xs text-slate-500">{t('setup.requiredField')}</p>
         </label>
         <Input
@@ -59,34 +80,32 @@ const SetupPage = () => {
         />
       </div>
 
-      <div className="space-y-1">
-        <label className="text-sm">{t('setup.apiKeyLabel')}</label>
-        <Input
-          value={imgixToken}
-          type="password"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixToken(e.target.value)}
-        />
-      </div>
+      {imgixSourceType === 'other' ? (
+        <>
+          <div className="space-y-1">
+            <label className="text-sm">
+              <p>{t('setup.apiKey.label')}</p>
+              <p className="flex text-xs text-slate-500">{t('setup.apiKey.hint')}</p>
+            </label>
+            <Input
+              value={imgixToken}
+              type="password"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixToken(e.target.value)}
+            />
+          </div>
 
-      <div className="space-y-1">
-        <label className="text-sm">{t('setup.sourceIdLabel')}</label>
-        <Input
-          value={imgixSourceId}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixSourceId(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <label className="text-sm">{t('setup.sourceTypeLabel')}</label>
-        <Select
-          value={imgixSourceType}
-          onChange={(e) => setImgixSourceType(e.target.value as 'webfolder' | 'other')}
-          className="h-10 w-full rounded-sm border border-slate-300 px-3 text-black"
-        >
-          <option value="webfolder">Webfolder</option>
-          <option value="other">Other</option>
-        </Select>
-      </div>
+          <div className="space-y-1">
+            <label className="text-sm">
+              <p>{t('setup.sourceId.label')}</p>
+              <p className="flex text-xs text-slate-500">{t('setup.sourceId.hint')}</p>
+            </label>
+            <Input
+              value={imgixSourceId}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixSourceId(e.target.value)}
+            />
+          </div>
+        </>
+      ) : null}
 
       <Button
         size="large"

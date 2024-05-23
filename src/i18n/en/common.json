@@ -4,12 +4,23 @@
   },
   "setup": {
     "description": "This app allows you to easily use imgix assets in Hygraph. Please provide the following details to get started:",
-    "baseUrlLabel": "imgix source URL",
-    "apiKeyLabel": "imgix API key",
-    "sourceIdLabel": "imgix source ID",
+    "baseUrl": {
+      "label": "Source URL"
+    },
+    "apiKey": {
+      "label": "API key",
+      "hint": "Needs \"Sources\" and \"Asset Manager Browse\" permissions"
+    },
+    "sourceId": {
+      "label": "Source ID",
+      "hint": "Required for non-webfolder sources"
+    },
+    "sourceType": {
+      "label": "Source type",
+      "hint": "How do I set this up?"
+    },
     "saveButtonLabel": "Save config",
     "saveButtonLoadingLabel": "Saving...",
-    "sourceTypeLabel": "imgix source type",
     "requiredField": "Required",
     "errorToast": {
       "title": "Error",

@@ -6,7 +6,7 @@ export const configSchema = z.object({
   imgixBase: z.string().min(1).default(''),
   imgixToken: z.string().optional().default(''),
   imgixSourceId: z.string().optional().default(''),
-  imgixSourceType: z.enum(['webfolder', 'other']).optional().default('webfolder')
+  imgixSourceType: z.enum(['hygraph-webfolder', 'other']).optional().default('hygraph-webfolder')
 });
 
 export type AppConfig = z.infer<typeof configSchema>;
