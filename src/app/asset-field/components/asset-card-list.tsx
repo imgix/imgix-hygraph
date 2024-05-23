@@ -1,10 +1,10 @@
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { DraggableAssetCardContainer } from '@/app/asset-field/components/DraggableAssetCardContainer/DraggableAssetCardContainer';
-import { AssetCard } from '@/app/asset-field/components/AssetCard/AssetCard';
+import { AssetCard } from '@/app/asset-field/components/asset-card';
 import { DragEndEvent } from '@dnd-kit/core/dist/types/events';
 import { StoredAsset } from '@/types';
+import { DraggableAssetCardContainer } from './draggable-asset-card-container';
 
 type AssetCardListProps = {
   assets: StoredAsset[];

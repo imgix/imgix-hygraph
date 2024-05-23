@@ -1,7 +1,16 @@
 import { Icon } from '@/types/common';
 import { Box, Card, Flex, IconButton } from '@hygraph/baukasten';
 import { Close, DragHandle, FieldAsset } from '@hygraph/icons';
-import type { AssetCard } from './AssetCard.types';
+
+export type AssetCard = {
+  dragHandleProps?: { [x: string]: Function };
+  id: string;
+  onRemoveItem: (id: string) => void;
+  isSingleAsset: boolean;
+  imageUrl: string;
+  name: string;
+  isDragging?: boolean;
+};
 
 const AssetCard = ({ dragHandleProps, onRemoveItem, name, id, isSingleAsset, imageUrl, isDragging }: AssetCard) => {
   const setCursor = (isSingleAsset: boolean, isDragging: boolean | undefined) => {

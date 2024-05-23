@@ -4,7 +4,7 @@ import { Error404, FieldAsset, MoreFill } from '@hygraph/icons';
 import { useEffect, useState } from 'react';
 import { Nullable } from '@/types/common';
 import { t } from 'i18next';
-import { getResizedImgixUrl } from '../AssetCard/AssetCard';
+import { getResizedImgixUrl } from './asset-card';
 import { StoredAsset } from '@/types';
 
 export interface ContentTableCell {

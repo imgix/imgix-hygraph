@@ -8,7 +8,6 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { Button } from '@hygraph/baukasten';
 import { ComponentType } from 'react';
 
-import { AssetCardList } from '@/app/asset-field/components/AssetCardList/AssetCardList';
 import { useAppConfig } from '@/hooks/useAppConfig';
 import { Asset, StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
@@ -17,7 +16,8 @@ import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { pick, uniqueBy } from 'remeda';
-import { ContentTableCell } from './components/ContentTableCell/ContentTableCell';
+import { ContentTableCell } from './components/content-table-cell';
+import { AssetCardList } from './components/asset-card-list';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
