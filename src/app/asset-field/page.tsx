@@ -34,7 +34,15 @@ const AssetField = () => {
     isTableCell
   } = useFieldExtension();
 
-  const [assets, setAssets] = useState(() => getInitialAssetsValue(value));
+  const [assets, _setAssets] = useState(() => getInitialAssetsValue(value));
+
+  const setAssets = (fn: (assets: StoredAsset[]) => StoredAsset[]) => {
+    _setAssets((assets) => {
+      const newAssets = fn(assets);
+      onChange(isList ? newAssets : newAssets[0]);
+      return newAssets;
+    });
+  };
 
   const updateAssets = (assets: StoredAsset[]) => {
     const transformAsset = (asset: StoredAsset) => pick(asset, ['url', 'id']);
@@ -43,19 +51,12 @@ const AssetField = () => {
       return onChange(null);
     }
 
-    if (isList) {
-      setAssets(assets);
-      onChange(assets.map(transformAsset));
-      return;
-    }
-
-    setAssets(assets);
-    onChange(transformAsset(assets[0]));
+    setAssets(() => assets.map(transformAsset));
   };
 
   // Handles "Clear"/"Clear all" button
   useEffect(() => {
-    if (value === null) setAssets([]);
+    if (value === null) setAssets(() => []);
   }, [value]);
 
   const handleOpenPreviewDialog = () => {
