@@ -2,7 +2,7 @@ import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
 import { Asset } from '@/types';
 import { cn } from '@/util';
-import { Box, Pill } from '@hygraph/baukasten';
+import { Box } from '@hygraph/baukasten';
 import { FieldRelation } from '@hygraph/icons';
 import prettyBytes from 'pretty-bytes';
 import { type ReactNode } from 'react';
@@ -90,10 +90,11 @@ export function AssetTable({
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
               </TableCell>
+
               <TableCell>
-                <Pill maxWidth={110} size="24">
+                <div className="w-full max-w-[110px] overflow-hidden text-ellipsis rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-500">
                   {asset.id}
-                </Pill>
+                </div>
               </TableCell>
               <TableCell>{formatDate(asset.createdAt)}</TableCell>
               <TableCell>
