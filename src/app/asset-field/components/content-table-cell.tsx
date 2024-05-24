@@ -1,5 +1,5 @@
 import { StoredAsset } from '@/types';
-import { Box, Flex, Spinner } from '@hygraph/baukasten';
+import { Box, Spinner } from '@hygraph/baukasten';
 import { Error404, FieldAsset, MoreFill } from '@hygraph/icons';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ type ContentTableCellProps = {
 
 export const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTableCellProps) => {
   return (
-    <Flex flexDirection="row" maxHeight="60px" gap={8} cursor="pointer" onClick={handleOpenPreviewDialog}>
+    <div className="flex max-h-[60px] cursor-pointer gap-2" onClick={handleOpenPreviewDialog}>
       {assets.slice(0, 3).map((asset) => (
         <Box
           height={60}
@@ -31,7 +31,7 @@ export const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTab
           <Box as={MoreFill} color="neutral.200" width={40} height={40} />
         </Box>
       )}
-    </Flex>
+    </div>
   );
 };
 

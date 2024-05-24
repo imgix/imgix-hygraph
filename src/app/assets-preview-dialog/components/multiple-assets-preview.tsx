@@ -1,7 +1,7 @@
 import { Button } from '@/components/button';
 import { StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
-import { Box, DialogContent, Flex, Grid } from '@hygraph/baukasten';
+import { Box, DialogContent, Grid } from '@hygraph/baukasten';
 import { Close, FieldAsset } from '@hygraph/icons';
 import { useTranslation } from 'react-i18next';
 
@@ -45,13 +45,13 @@ const MultipleAssetsPreviewThumbnail = (asset: StoredAsset) => {
   const { t } = useTranslation();
 
   return (
-    <Flex justifyContent="center" alignItems="center" flexDirection="column" width="100%" height="100%" gap={4}>
+    <div className="flex h-full w-full flex-col items-center justify-center gap-1">
       {asset.url ? (
         <img src={asset.url} alt={t('general.assetThumbnailAlt')} className="object-fit h-full" />
       ) : (
         <Box as={FieldAsset} color="neutral.200" width={60} height={60} />
       )}
-    </Flex>
+    </div>
   );
 };
 
