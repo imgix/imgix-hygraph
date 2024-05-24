@@ -18,11 +18,11 @@ To use this app, you will need to create an imgix source, either a Web Folder ty
 
 1. Create a new imgix source, selecting "Web Folder" as a Storage Type.
 
-2. Now enter the base URL for your imgix source, to obtain the url you should copy the URL of one of your hygraph assets and remove the last part of the URL.
+2. Now enter the base URL for your imgix source. To obtain the URL, go to the "Assets" tab in the Hygraph app and right click any asset thumbnail, then select "Copy Image Address". Keep the part before `/output=...` and delete the rest.
 
    **Example**
 
-   If your copied URL is `https://eu-central-1-shared-euc1-02.graphassets.com/clv45iyzm039407umd5w7aemt/clw6dt7akde9i07upz2ykuyc3` you should use `https://eu-central-1-shared-euc1-02.graphassets.com/clv45iyzm039407umd5w7aemt` as the base URL.
+   If your copied URL is `https://eu-central-1-shared-euc1-02.graphassets.com/clv45iyzm039407umd5w7aemt/output=format:jpg/resize=width:59,height:59,fit:crop/clw6dt8hndhuu07w6tcaqt9h3` you should use `https://eu-central-1-shared-euc1-02.graphassets.com/clv45iyzm039407umd5w7aemt` as the base URL.
 
 3. Use the default imgix subdomain or configure your own and press "Deploy Source".
 
