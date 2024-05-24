@@ -5,7 +5,7 @@ import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Box, Heading, Progress } from '@hygraph/baukasten';
+import { Box, Progress } from '@hygraph/baukasten';
 import { useState } from 'react';
 import { uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
@@ -204,9 +204,7 @@ function DialogHeader() {
   return (
     <div className="flex items-center space-x-12 border-b p-24">
       <AttachmentIcon className="h-32 w-32 rounded bg-brand-100 p-2 text-brand-500" />
-      <Heading as="h4" className="text-lg font-medium">
-        Select Asset
-      </Heading>
+      <h4 className="text-lg font-medium">Select Asset</h4>
     </div>
   );
 }
