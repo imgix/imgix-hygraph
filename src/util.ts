@@ -1,7 +1,15 @@
 import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { extendTailwindMerge } from 'tailwind-merge';
 import { Asset, HygraphAsset, ImgixAsset } from './types';
 import { isNullish } from 'remeda';
+
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      'font-size': [{ text: ['m'] }]
+    }
+  }
+});
 
 export function cn(...args: ClassValue[]) {
   return twMerge(clsx(args));

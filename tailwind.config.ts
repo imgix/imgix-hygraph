@@ -144,6 +144,7 @@ const config: Config = {
     }
   },
   important: true,
-  darkMode: 'class'
+  darkMode: 'class',
+  plugins: [require('tailwindcss-animate')]
 };
 export default config;
