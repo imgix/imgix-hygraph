@@ -37,11 +37,11 @@ export const AssetCard = ({
   return (
     <Card className="flex h-[70px] max-h-[70px] items-center">
       {!isSingleAsset && (
-        <Box className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
+        <div className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
           {(DragHandle as Icon)({
             style: { fontSize: '0.8rem', cursor: setCursor(isSingleAsset, isDragging) }
           })}
-        </Box>
+        </div>
       )}
       <div className="ml-4 flex h-[70px] w-[70px] min-w-[70px] items-center justify-center">
         {imageUrl ? (

@@ -5,7 +5,7 @@ import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Box, Progress } from '@hygraph/baukasten';
+import { Progress } from '@hygraph/baukasten';
 import { useState } from 'react';
 import { uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
@@ -69,7 +69,7 @@ function HygraphAssetDialog() {
       <div className="grid h-full grid-rows-[auto_auto_1fr_auto_auto]">
         <DialogHeader />
 
-        <Box px="24px" py="8px" className="flex space-x-2 border-b text-m">
+        <div className="flex space-x-2 border-b px-24 py-2 text-m">
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
           {selectedAssets.length > 0 ? (
@@ -91,7 +91,7 @@ function HygraphAssetDialog() {
               {showOnlySelectedAssets ? 'Show all entries' : 'Show selected entries'}
             </Button>
           ) : null}
-        </Box>
+        </div>
 
         <div className="overflow-auto">
           {isLoading ? (
@@ -157,7 +157,7 @@ function ImgixAssetDialog() {
       <div className="grid h-full grid-rows-[auto_auto_1fr_auto_auto]">
         <DialogHeader />
 
-        <Box px="24px" py="8px" className="flex space-x-2 border-b text-m">
+        <div className="flex space-x-2 border-b px-24 py-2 text-m">
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
           {selectedAssets.length > 0 ? (
@@ -165,7 +165,7 @@ function ImgixAssetDialog() {
               Clear selection
             </Button>
           ) : null}
-        </Box>
+        </div>
 
         <div className="overflow-auto">
           {isLoading ? (

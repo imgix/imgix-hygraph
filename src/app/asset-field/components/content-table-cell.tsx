@@ -14,22 +14,14 @@ export const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTab
   return (
     <div className="flex max-h-[60px] cursor-pointer gap-2" onClick={handleOpenPreviewDialog}>
       {assets.slice(0, 3).map((asset) => (
-        <Box
-          height={60}
-          width={60}
-          position="relative"
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          key={asset.id}
-        >
+        <div className="relative flex h-[60px] w-[60px] items-center justify-center" key={asset.id}>
           <ContentTableCellThumbnail {...asset} />
-        </Box>
+        </div>
       ))}
       {assets.length > 3 && (
-        <Box height={60} width={60} display="flex" justifyContent="center" alignItems="center">
+        <div className="flex h-[60px] w-[60px] items-center justify-center">
           <Box as={MoreFill} color="neutral.200" width={40} height={40} />
-        </Box>
+        </div>
       )}
     </div>
   );

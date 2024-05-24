@@ -1,6 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Box } from '@hygraph/baukasten';
 
 type SortableItemProps = {
   id: string;
@@ -19,9 +18,9 @@ const DraggableAssetCardContainer = ({ id, children }: SortableItemProps) => {
   const zIndexValue = isDragging ? 1000 : 0;
 
   return (
-    <Box ref={setNodeRef} style={{ ...style, zIndex: zIndexValue }} {...attributes}>
+    <div ref={setNodeRef} style={{ ...style, zIndex: zIndexValue }} {...attributes}>
       {children({ dragHandleProps: { ...listeners }, isDragging })}
-    </Box>
+    </div>
   );
 };
 
