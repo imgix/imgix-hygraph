@@ -4,13 +4,13 @@ import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
 import { Button } from '@/components/button';
 import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
 import { Select } from '@headlessui/react';
-import { Box, Input } from '@hygraph/baukasten';
-import { ExternalLink } from '@hygraph/icons';
+import { Input } from '@hygraph/baukasten';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import HygraphIcon from '../../../public/hygraph-icon.svg';
-import ImgixIcon from '../../../public/imgix-icon.png';
+import HygraphIcon from '/public/hygraph-icon.svg';
+import ExteralLinkIcon from '/public/icons/external-link.svg';
+import ImgixIcon from '/public/imgix-icon.png';
 
 const SetupPage = () => {
   const config = useAppConfig();
@@ -55,7 +55,7 @@ const SetupPage = () => {
           <p className="flex text-xs text-slate-500">
             <a href="https://docs.imgix.com/setup/creating-sources" target="_blank" rel="noreferrer">
               <span>{t('setup.sourceType.hint')}</span>
-              <Box as={ExternalLink} className="ml-1 h-4 w-4" />
+              <ExteralLinkIcon className="ml-1 inline-block h-4 w-4" />
             </a>
           </p>
         </label>

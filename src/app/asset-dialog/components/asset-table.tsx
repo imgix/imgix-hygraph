@@ -2,11 +2,10 @@ import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
 import { Asset } from '@/types';
 import { cn } from '@/util';
-import { Box } from '@hygraph/baukasten';
-import { FieldRelation } from '@hygraph/icons';
 import prettyBytes from 'pretty-bytes';
 import { type ReactNode } from 'react';
 import { User } from './user';
+import FieldRelationIcon from '/public/icons/field-relation.svg';
 
 export function AssetTable({
   removeFromSelection,
@@ -143,7 +142,7 @@ const TableCell = ({ children, className }: { children?: ReactNode; className?: 
 function SelectAssetButton({ onClick }: { onClick: () => void }) {
   return (
     <Button variant="ghost" size="icon" onClick={onClick}>
-      <Box as={FieldRelation} className="h-4 w-4" />
+      <FieldRelationIcon className="h-4 w-4" />
     </Button>
   );
 }

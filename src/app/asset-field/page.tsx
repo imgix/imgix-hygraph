@@ -8,7 +8,6 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useFieldExtension } from '@hygraph/app-sdk-react';
 import { Box } from '@hygraph/baukasten';
-import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
 import findIndex from 'lodash/findIndex';
 import { useEffect, useState } from 'react';
@@ -16,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { pick, uniqueBy } from 'remeda';
 import { AssetCardList } from './components/asset-card-list';
 import { ContentTableCell } from './components/content-table-cell';
+import FieldRelationIcon from '/public/icons/field-relation.svg';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
@@ -113,7 +113,7 @@ const AssetField = () => {
       />
       <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
         <div className="flex items-center space-x-1">
-          <Box as={FieldRelation} className="h-4 w-4" />
+          <FieldRelationIcon className="h-4 w-4" />
           <span>
             {isList || assets.length === 0
               ? t('assetPicker.addAssetButtonLabel')

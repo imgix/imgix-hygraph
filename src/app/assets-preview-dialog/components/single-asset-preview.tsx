@@ -2,8 +2,9 @@ import { Button } from '@/components/button';
 import { StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
 import { Box, DialogContent } from '@hygraph/baukasten';
-import { ArrowBack, Close } from '@hygraph/icons';
 import { useTranslation } from 'react-i18next';
+import ArrowLeftIcon from '/public/icons/arrow-left.svg';
+import CloseIcon from '/public/icons/close.svg';
 
 interface SingleAssetPreview {
   singleAssetPreview: StoredAsset;
@@ -23,24 +24,26 @@ const SingleAssetPreview = ({
 
   return (
     <DialogContent padding={48} height={900} display="flex" justifyContent="center">
-      <Button
-        variant="ghostSecondary"
-        className="absolute right-0 top-0 m-8"
-        size="icon"
-        onClick={() => onCloseDialog(null)}
-      >
-        <Box as={Close} className="h-4 w-4" />
-      </Button>
-      {!isFromSingleAssetField && (
+      {isFromSingleAssetField ? (
+        <Button
+          variant="ghostSecondary"
+          className="absolute right-0 top-0 m-8"
+          size="icon"
+          onClick={() => onCloseDialog(null)}
+        >
+          <CloseIcon className="h-4 w-4" />
+        </Button>
+      ) : (
         <Button
           variant="ghostSecondary"
           size="icon"
           className="absolute right-0 top-0 m-8"
           onClick={() => setSingleAssetPreview(null)}
         >
-          <Box as={ArrowBack} className="h-4 w-4" />
+          <ArrowLeftIcon className="h-4 w-4" />
         </Button>
       )}
+
       <Box>
         <img
           alt={t('general.assetThumbnailAlt')}

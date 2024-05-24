@@ -1,9 +1,10 @@
 import { StoredAsset } from '@/types';
 import { Box, Spinner } from '@hygraph/baukasten';
-import { Error404, FieldAsset, MoreFill } from '@hygraph/icons';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { getResizedImgixUrl } from './asset-card';
+import FieldAssetIcon from '/public/icons/field-asset.svg';
+import Error404Icon from '/public/icons/error-404.svg';
 
 type ContentTableCellProps = {
   handleOpenPreviewDialog: () => void;
@@ -18,11 +19,6 @@ export const ContentTableCell = ({ handleOpenPreviewDialog, assets }: ContentTab
           <ContentTableCellThumbnail {...asset} />
         </div>
       ))}
-      {assets.length > 3 && (
-        <div className="flex h-[60px] w-[60px] items-center justify-center">
-          <Box as={MoreFill} color="neutral.200" width={40} height={40} />
-        </div>
-      )}
     </div>
   );
 };
@@ -42,7 +38,7 @@ const ContentTableCellThumbnail = (asset: StoredAsset) => {
   }
 
   if (status === 'error') {
-    return <Box as={Error404} color="neutral.200" width={40} height={40} />;
+    return <Error404Icon className="h-[40px] w-[40px] text-neutral-200" />;
   }
 
   if (status === 'success') {
@@ -55,5 +51,5 @@ const ContentTableCellThumbnail = (asset: StoredAsset) => {
     );
   }
 
-  return <Box as={FieldAsset} color="neutral.200" width={40} height={40} />;
+  return <FieldAssetIcon className="h-[40px] w-[40px] text-neutral-200" />;
 };

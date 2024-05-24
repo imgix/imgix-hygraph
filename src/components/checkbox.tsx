@@ -1,10 +1,9 @@
 'use client';
 
-import * as React from 'react';
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { Check } from '@hygraph/icons';
 import { cn } from '@/util';
-import { Box } from '@hygraph/baukasten';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import * as React from 'react';
+import CheckIcon from '/public/icons/check.svg';
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
@@ -19,7 +18,7 @@ const Checkbox = React.forwardRef<
     {...props}
   >
     <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-current')}>
-      <Box as={Check} className="h-4 w-4" />
+      <CheckIcon className="h-4 w-4" />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ));

@@ -12,7 +12,7 @@ import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
 import { useHygraphAssets } from './useHygraphAssets';
 import { useImgixAssets } from './useImgixAssets';
-import AttachmentIcon from '/public/icons/attachment.svg';
+import FieldAssetIcon from '/public/icons/field-asset.svg';
 
 export default function AssetDialog() {
   const { configuration } = useUiExtensionDialog<
@@ -203,7 +203,7 @@ function ImgixAssetDialog() {
 function DialogHeader() {
   return (
     <div className="flex items-center space-x-12 border-b p-24">
-      <AttachmentIcon className="h-32 w-32 rounded bg-brand-100 p-2 text-brand-500" />
+      <FieldAssetIcon className="h-32 w-32 rounded bg-brand-100 p-2 text-brand-500" />
       <h4 className="text-lg font-medium">Select Asset</h4>
     </div>
   );

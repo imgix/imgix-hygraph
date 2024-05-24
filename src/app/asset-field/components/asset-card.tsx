@@ -1,7 +1,8 @@
 import { Button } from '@/components/button';
-import { Icon } from '@/types/common';
-import { Box, Card } from '@hygraph/baukasten';
-import { Close, DragHandle, FieldAsset } from '@hygraph/icons';
+import { Card } from '@hygraph/baukasten';
+import CloseIcon from '/public/icons/close.svg';
+import DragHandleIcon from '/public/icons/drag-handle.svg';
+import FieldAssetIcon from '/public/icons/field-asset.svg';
 
 type AssetCardProps = {
   dragHandleProps?: { [x: string]: Function };
@@ -38,9 +39,10 @@ export const AssetCard = ({
     <Card className="flex h-[70px] max-h-[70px] items-center">
       {!isSingleAsset && (
         <div className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
-          {(DragHandle as Icon)({
-            style: { fontSize: '0.8rem', cursor: setCursor(isSingleAsset, isDragging) }
-          })}
+          <DragHandleIcon
+            style={{ fontSize: '0.8rem', cursor: setCursor(isSingleAsset, isDragging) }}
+            className="h-2.5"
+          />
         </div>
       )}
       <div className="ml-4 flex h-[70px] w-[70px] min-w-[70px] items-center justify-center">
@@ -50,7 +52,7 @@ export const AssetCard = ({
             <img src={getResizedImgixUrl(imageUrl)} className="h-[70px] w-[70px] object-cover" />
           </>
         ) : (
-          <Box as={FieldAsset} color="neutral.200" width={50} height={50} />
+          <FieldAssetIcon className="h-[50px] w-[50px] text-neutral-200" />
         )}
       </div>
       <div className="ml-4 items-center overflow-hidden">
@@ -59,7 +61,7 @@ export const AssetCard = ({
         </p>
       </div>
       <Button variant="ghostSecondary" size="icon" className="ml-auto mr-8" onClick={() => onRemoveItem(id)}>
-        <Box as={Close} className="h-4 w-4" />
+        <CloseIcon className="h-4 w-4" />
       </Button>
     </Card>
   );
