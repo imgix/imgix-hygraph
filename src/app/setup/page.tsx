@@ -1,9 +1,10 @@
 'use client';
 
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
+import { Button } from '@/components/button';
 import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
 import { Select } from '@headlessui/react';
-import { Box, Button, Input } from '@hygraph/baukasten';
+import { Box, Input } from '@hygraph/baukasten';
 import { ExternalLink } from '@hygraph/icons';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
@@ -108,7 +109,6 @@ const SetupPage = () => {
       ) : null}
 
       <Button
-        size="large"
         onClick={() => updateConfig(appConfig)}
         disabled={isButtonDisabled || isUpdatingConfig}
         loading={isUpdatingConfig}

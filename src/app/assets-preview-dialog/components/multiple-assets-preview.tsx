@@ -1,8 +1,9 @@
-import { Box, DialogContent, Flex, Grid, IconButton, Pill, Stack } from '@hygraph/baukasten';
-import { Close, FieldAsset } from '@hygraph/icons';
-import { Icon, Nullable } from '@/types/common';
-import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/button';
 import { StoredAsset } from '@/types';
+import { Nullable } from '@/types/common';
+import { Box, DialogContent, Flex, Grid } from '@hygraph/baukasten';
+import { Close, FieldAsset } from '@hygraph/icons';
+import { useTranslation } from 'react-i18next';
 
 interface MultipleAssetsPreview {
   assets: StoredAsset[];
@@ -13,16 +14,14 @@ interface MultipleAssetsPreview {
 const MultipleAssetsPreview = ({ assets, onCloseDialog, handleClick }: MultipleAssetsPreview) => {
   return (
     <DialogContent height={900} padding={48}>
-      <IconButton
-        icon={Close as Icon}
-        variant="outline"
-        variantColor="primary"
-        position="absolute"
-        right={0}
-        top={0}
-        margin={8}
+      <Button
+        variant="ghostSecondary"
+        className="absolute right-0 top-0 m-8"
+        size="icon"
         onClick={() => onCloseDialog(null)}
-      />
+      >
+        <Box as={Close} className="h-4 w-4" />
+      </Button>
       <Grid gridTemplateColumns="repeat(4, 1fr)" gap="8">
         {assets.map((asset, index) => (
           <Box

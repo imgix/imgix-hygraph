@@ -1,10 +1,11 @@
 'use client';
 
+import { Button } from '@/components/button';
 import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Box, Button, Divider, Heading, Progress } from '@hygraph/baukasten';
+import { Box, Divider, Heading, Progress } from '@hygraph/baukasten';
 import { useState } from 'react';
 import { uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
@@ -74,15 +75,14 @@ function HygraphAssetDialog() {
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
           {selectedAssets.length > 0 ? (
-            <Button variant="ghost" variantColor="secondary" size="small" onClick={clearSelection}>
+            <Button variant="secondary" size="small" onClick={clearSelection}>
               Clear selection
             </Button>
           ) : null}
 
           {selectedAssets.length > 0 || showOnlySelectedAssets ? (
             <Button
-              variant="ghost"
-              variantColor="secondary"
+              variant="secondary"
               size="small"
               onClick={() => {
                 setSelectedAssetsSnapshot(selectedAssets);
@@ -167,7 +167,7 @@ function ImgixAssetDialog() {
           <p className="flex h-24 items-center">{selectedAssets.length} entries selected</p>
 
           {selectedAssets.length > 0 ? (
-            <Button variant="ghost" variantColor="secondary" size="small" onClick={clearSelection}>
+            <Button variant="secondary" size="small" onClick={clearSelection}>
               Clear selection
             </Button>
           ) : null}
@@ -233,7 +233,7 @@ function DialogFooter({
 
   return !isSingleSelect ? (
     <div className="flex justify-end rounded-b-lg bg-brand-50 px-24 py-16">
-      <Button onClick={closeDialog} size="large" disabled={!allowSubmit}>
+      <Button onClick={closeDialog} disabled={!allowSubmit}>
         Add selected assets {showAssetCount ? `(${selectedAssetCount})` : ''}
       </Button>
     </div>

@@ -1,5 +1,6 @@
+import { Button } from '@/components/button';
 import { Icon } from '@/types/common';
-import { Box, Card, Flex, IconButton } from '@hygraph/baukasten';
+import { Box, Card, Flex } from '@hygraph/baukasten';
 import { Close, DragHandle, FieldAsset } from '@hygraph/icons';
 
 type AssetCardProps = {
@@ -34,7 +35,7 @@ export const AssetCard = ({
   };
 
   return (
-    <Card className="flex h-[70px] max-h-[70px]">
+    <Card className="flex h-[70px] max-h-[70px] items-center">
       {!isSingleAsset && (
         <Box className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
           {(DragHandle as Icon)({
@@ -57,13 +58,9 @@ export const AssetCard = ({
           {name || ''}
         </p>
       </Flex>
-      <IconButton
-        icon={Close as Icon}
-        variantColor="secondary"
-        variant="ghost"
-        className="ml-auto mr-8"
-        onClick={() => onRemoveItem(id)}
-      />
+      <Button variant="ghostSecondary" size="icon" className="ml-auto mr-8" onClick={() => onRemoveItem(id)}>
+        <Box as={Close} className="h-4 w-4" />
+      </Button>
     </Card>
   );
 };

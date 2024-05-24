@@ -1,23 +1,21 @@
 'use client';
 
-import { DragEndEvent } from '@dnd-kit/core';
-import findIndex from 'lodash/findIndex';
-import { useEffect, useState } from 'react';
-
-import { arrayMove } from '@dnd-kit/sortable';
-import { Button } from '@hygraph/baukasten';
-import { ComponentType } from 'react';
-
+import { Button } from '@/components/button';
 import { useAppConfig } from '@/hooks/useAppConfig';
 import { Asset, StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
+import { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useFieldExtension } from '@hygraph/app-sdk-react';
+import { Box } from '@hygraph/baukasten';
 import { FieldRelation } from '@hygraph/icons';
 import { isEmpty } from 'lodash';
+import findIndex from 'lodash/findIndex';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { pick, uniqueBy } from 'remeda';
-import { ContentTableCell } from './components/content-table-cell';
 import { AssetCardList } from './components/asset-card-list';
+import { ContentTableCell } from './components/content-table-cell';
 
 const ASSET_MANAGER_DIALOG_ROUTE = './asset-dialog';
 const ASSETS_PREVIEW_DIALOG_ROUTE = './assets-preview-dialog';
@@ -113,15 +111,15 @@ const AssetField = () => {
         handleOnDragEnd={handleOnDragEnd}
         isDraggingDisabled={!isList}
       />
-      <Button
-        className="mt-2 w-full"
-        variant="dashed"
-        variantColor="primary"
-        size="large"
-        iconBefore={FieldRelation as ComponentType}
-        onClick={handleOpenAssetManagerDialog}
-      >
-        {isList || assets.length === 0 ? t('assetPicker.addAssetButtonLabel') : t('assetPicker.updateAssetButtonLabel')}
+      <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
+        <div className="flex items-center space-x-1">
+          <Box as={FieldRelation} className="h-4 w-4" />
+          <span>
+            {isList || assets.length === 0
+              ? t('assetPicker.addAssetButtonLabel')
+              : t('assetPicker.updateAssetButtonLabel')}
+          </span>
+        </div>
       </Button>
     </>
   );

@@ -1,11 +1,12 @@
+import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
+import { Asset } from '@/types';
 import { cn } from '@/util';
-import { IconButton, Pill } from '@hygraph/baukasten';
+import { Box, Pill } from '@hygraph/baukasten';
 import { FieldRelation } from '@hygraph/icons';
 import prettyBytes from 'pretty-bytes';
 import { type ReactNode } from 'react';
 import { User } from './user';
-import { Asset } from '@/types';
 
 export function AssetTable({
   removeFromSelection,
@@ -132,14 +133,18 @@ const TableHeader = ({ children, className }: { children?: ReactNode; className?
 
 const TableCell = ({ children, className }: { children?: ReactNode; className?: string }) => {
   return (
-    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap px-2 text-m', className)}>
+    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap px-2 py-0 text-m', className)}>
       {children}
     </td>
   );
 };
 
 function SelectAssetButton({ onClick }: { onClick: () => void }) {
-  return <IconButton variant="ghost" variantColor="primary" icon={FieldRelation} onClick={onClick} />;
+  return (
+    <Button variant="ghost" size="icon" onClick={onClick}>
+      <Box as={FieldRelation} className="h-4 w-4" />
+    </Button>
+  );
 }
 
 const formatDate = (date: Date) => {

@@ -1,5 +1,5 @@
+import { Button } from '@/components/button';
 import { Select } from '@headlessui/react';
-import { Button } from '@hygraph/baukasten';
 
 export const Pagination = ({
   page,
@@ -36,7 +36,7 @@ export const Pagination = ({
       <p>{totalItems} entries</p>
 
       <div className="flex space-x-32">
-        <Button onClick={previousPage} disabled={!hasPreviousPage} size="medium" variant="ghost" variantColor="primary">
+        <Button onClick={previousPage} disabled={!hasPreviousPage} size="medium" variant="ghost">
           Previous
         </Button>
 
@@ -53,7 +53,7 @@ export const Pagination = ({
           <span>of {pageCount}</span>
         </span>
 
-        <Button onClick={nextPage} disabled={!hasNextPage} size="medium" variant="ghost" variantColor="primary">
+        <Button onClick={nextPage} disabled={!hasNextPage} size="medium" variant="ghost">
           Next
         </Button>
       </div>
