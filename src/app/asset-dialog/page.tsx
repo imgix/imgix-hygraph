@@ -7,7 +7,7 @@ import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
 import { useState } from 'react';
-import { uniqueBy } from 'remeda';
+import { isNullish, uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
 import { useHygraphAssets } from './useHygraphAssets';
@@ -62,7 +62,7 @@ function HygraphAssetDialog() {
     resultsPerPage: resultsPerPage,
     pageNumber: page,
     includedIds: showOnlySelectedAssets ? selectedAssetsSnapshot.map((asset) => asset.id) : undefined,
-    excludedIds: excludedAssets,
+    excludedIds: excludedAssets.filter((id) => !isNullish(id)),
     query: debouncedQuery
   });
 
