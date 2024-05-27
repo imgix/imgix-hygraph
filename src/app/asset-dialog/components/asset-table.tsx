@@ -44,7 +44,6 @@ export function AssetTable({
               </div>
             ) : null}
           </TableHeader>
-          <TableHeader className="w-[130px]">Stages</TableHeader>
           <TableHeader className="w-[80px]">Preview</TableHeader>
           <TableHeader>ID</TableHeader>
           <TableHeader>Created At</TableHeader>
@@ -84,7 +83,6 @@ export function AssetTable({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="min-w-[130px]"></TableCell>
               <TableCell className="min-w-[80px]">
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
