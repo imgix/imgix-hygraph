@@ -74,7 +74,7 @@ function HygraphAssetDialog() {
       <div className="grid h-full grid-rows-[repeat(3,auto)_1fr_auto_auto]">
         <DialogHeader />
 
-        <div className="px-24 py-8">
+        <div className="border-b px-24 py-3">
           <Input
             className="max-w-[250px]"
             placeholder="Search for any item..."
