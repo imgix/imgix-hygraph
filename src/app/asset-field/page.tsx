@@ -28,7 +28,8 @@ const AssetField = () => {
     onChange,
     value,
     field: { isList },
-    isTableCell
+    isTableCell,
+    isReadOnly
   } = useFieldExtension();
 
   const [assets, _setAssets] = useState(() => getInitialAssetsValue(value));
@@ -110,16 +111,18 @@ const AssetField = () => {
         handleOnDragEnd={handleOnDragEnd}
         isDraggingDisabled={!isList}
       />
-      <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
-        <div className="flex items-center space-x-1">
-          <FieldRelationIcon className="h-4 w-4" />
-          <span>
-            {isList || assets.length === 0
-              ? t('assetPicker.addAssetButtonLabel')
-              : t('assetPicker.updateAssetButtonLabel')}
-          </span>
-        </div>
-      </Button>
+      {!isReadOnly ? (
+        <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
+          <div className="flex items-center space-x-1">
+            <FieldRelationIcon className="h-4 w-4" />
+            <span>
+              {isList || assets.length === 0
+                ? t('assetPicker.addAssetButtonLabel')
+                : t('assetPicker.updateAssetButtonLabel')}
+            </span>
+          </div>
+        </Button>
+      ) : null}
     </>
   );
 };
