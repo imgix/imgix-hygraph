@@ -175,7 +175,7 @@ function ImgixAssetDialog() {
       <div className="grid h-full grid-rows-[repeat(3,auto)_1fr_auto_auto]">
         <DialogHeader />
 
-        <div className="flex px-24 py-8">
+        <div className="flex border-b px-24 py-8">
           <Input
             className="max-w-[250px]"
             placeholder="Search for any item..."
