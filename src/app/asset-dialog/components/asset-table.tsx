@@ -131,7 +131,7 @@ const TableHeader = ({ children, className }: { children?: ReactNode; className?
 
 const TableCell = ({ children, className }: { children?: ReactNode; className?: string }) => {
   return (
-    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap px-2 py-0 text-m', className)}>
+    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap py-0 pl-2 text-m', className)}>
       {children}
     </td>
   );
