@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { z } from 'zod';
 
 export const configSchema = z.object({
-  imgixBase: z.string().min(1).default(''),
+  imgixBase: z.string().trim().url(),
   imgixToken: z.string().optional().default(''),
   imgixSourceId: z.string().optional().default(''),
   imgixSourceType: z.enum(['hygraph-webfolder', 'other']).optional().default('hygraph-webfolder')
@@ -15,8 +15,17 @@ export const useAppConfig = () => {
   const { installation } = useApp();
 
   const config = useMemo(() => {
-    return configSchema.parse(installation.config);
+    return configSchema.safeParse(installation.config);
   }, [installation.config]);
 
-  return config;
+  if (config.success) {
+    return config.data;
+  }
+
+  return {
+    imgixBase: 'https://',
+    imgixToken: '',
+    imgixSourceId: '',
+    imgixSourceType: 'hygraph-webfolder'
+  } as const;
 };

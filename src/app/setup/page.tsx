@@ -21,7 +21,7 @@ const SetupPage = () => {
   const [imgixSourceId, setImgixSourceId] = useState(config.imgixSourceId);
   const [imgixSourceType, setImgixSourceType] = useState(config.imgixSourceType);
 
-  const appConfig = {
+  const newConfig = {
     imgixBase,
     imgixToken,
     imgixSourceId,
@@ -31,7 +31,7 @@ const SetupPage = () => {
   const { isUpdatingConfig, updateConfig, isConfigUpdateError, configUpdateError } = useUpdateAppConfig();
 
   const isConfigValid = useMemo(() => {
-    const { success } = configSchema.safeParse(appConfig);
+    const { success } = configSchema.safeParse(newConfig);
     return success;
   }, [imgixBase, imgixToken]);
 
@@ -115,7 +115,7 @@ const SetupPage = () => {
       ) : null}
 
       <Button
-        onClick={() => updateConfig(appConfig)}
+        onClick={() => updateConfig(newConfig)}
         disabled={isButtonDisabled || isUpdatingConfig}
         loading={isUpdatingConfig}
         loadingText={t('setup.saveButtonLoadingLabel')}
