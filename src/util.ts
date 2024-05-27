@@ -45,19 +45,21 @@ export function imgixAssetToAsset(asset: ImgixAsset, sourceBaseUrl: string): Ass
     throw new Error('File name is null');
   }
 
+  const url = sourceBaseUrl + asset.attributes.origin_path;
+
   return {
     id: asset.id,
     createdAt: new Date(asset.attributes.date_created * 1000),
     createdBy: asset.attributes.uploaded_by ? { name: asset.attributes.uploaded_by } : undefined,
     updatedAt: asset.attributes.date_modified ? new Date(asset.attributes.date_modified * 1000) : undefined,
     updatedBy: undefined,
-    handle: fileName,
+    handle: asset.attributes.origin_path,
     fileName: fileName,
     height: asset.attributes.media_height ?? undefined,
     width: asset.attributes.media_width ?? undefined,
     fileSize: asset.attributes.file_size,
     mimeType: asset.attributes.content_type,
-    url: `${sourceBaseUrl}/${fileName}`,
-    thumbnail: `${sourceBaseUrl}/${fileName}?w=59&h=59&fit=crop`
+    url: url,
+    thumbnail: `${url}?w=59&h=59&fit=crop`
   };
 }
