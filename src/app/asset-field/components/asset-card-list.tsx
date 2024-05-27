@@ -11,36 +11,45 @@ type AssetCardListProps = {
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd: (event: DragEndEvent) => void;
   isDraggingDisabled: boolean;
+  isReadOnly: boolean;
 };
 
 type AssetCardWrapperProps = {
   assets: StoredAsset[];
   handleOnRemoveItem: (id: string) => void;
   handleOnDragEnd?: (event: DragEndEvent) => void;
+  isReadOnly: boolean;
 };
 
 export const AssetCardList = ({
   assets,
   handleOnRemoveItem,
   handleOnDragEnd,
-  isDraggingDisabled
+  isDraggingDisabled,
+  isReadOnly
 }: AssetCardListProps) => {
   return (
     <section className="flex flex-col gap-2">
       {isDraggingDisabled ? (
-        <NonDraggableAssetCardWrapper assets={assets} handleOnRemoveItem={handleOnRemoveItem} />
+        <NonDraggableAssetCardWrapper assets={assets} handleOnRemoveItem={handleOnRemoveItem} isReadOnly={isReadOnly} />
       ) : (
         <DraggableAssetCardWrapper
           assets={assets}
           handleOnRemoveItem={handleOnRemoveItem}
           handleOnDragEnd={handleOnDragEnd}
+          isReadOnly={isReadOnly}
         />
       )}
     </section>
   );
 };
 
-const DraggableAssetCardWrapper = ({ assets, handleOnRemoveItem, handleOnDragEnd }: AssetCardWrapperProps) => {
+const DraggableAssetCardWrapper = ({
+  assets,
+  handleOnRemoveItem,
+  handleOnDragEnd,
+  isReadOnly
+}: AssetCardWrapperProps) => {
   const isSingleAsset = assets.length === 1;
 
   return (
@@ -60,6 +69,7 @@ const DraggableAssetCardWrapper = ({ assets, handleOnRemoveItem, handleOnDragEnd
                 dragHandleProps={dragHandleProps}
                 isDragging={isDragging}
                 isSingleAsset={isSingleAsset}
+                isReadOnly={isReadOnly}
                 {...asset}
               />
             )}
@@ -70,7 +80,7 @@ const DraggableAssetCardWrapper = ({ assets, handleOnRemoveItem, handleOnDragEnd
   );
 };
 
-const NonDraggableAssetCardWrapper = ({ assets, handleOnRemoveItem }: AssetCardWrapperProps) => {
+const NonDraggableAssetCardWrapper = ({ assets, handleOnRemoveItem, isReadOnly }: AssetCardWrapperProps) => {
   if (assets.length < 1) return null;
 
   return (
@@ -79,6 +89,7 @@ const NonDraggableAssetCardWrapper = ({ assets, handleOnRemoveItem }: AssetCardW
       name={assets[0].id}
       isSingleAsset
       onRemoveItem={handleOnRemoveItem}
+      isReadOnly={isReadOnly}
       {...assets[0]}
     />
   );

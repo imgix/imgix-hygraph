@@ -12,6 +12,7 @@ type AssetCardProps = {
   imageUrl: string;
   name: string;
   isDragging?: boolean;
+  isReadOnly?: boolean;
 };
 
 export const AssetCard = ({
@@ -21,7 +22,8 @@ export const AssetCard = ({
   id,
   isSingleAsset,
   imageUrl,
-  isDragging
+  isDragging,
+  isReadOnly
 }: AssetCardProps) => {
   const getCursor = (isSingleAsset: boolean, isDragging: boolean | undefined) => {
     if (isSingleAsset) return 'cursor-default';
@@ -31,11 +33,11 @@ export const AssetCard = ({
 
   return (
     <div className="flex h-[70px] max-h-[70px] items-center rounded border border-neutral-100 bg-white shadow-md shadow-black/5">
-      {!isSingleAsset && (
+      {!isSingleAsset && !isReadOnly ? (
         <div className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
           <DragHandleIcon className={cn('h-2.5 text-[0.8rem]', getCursor(isSingleAsset, isDragging))} />
         </div>
-      )}
+      ) : null}
       <div className="ml-4 flex h-[70px] w-[70px] min-w-[70px] items-center justify-center">
         {imageUrl ? (
           <>
@@ -51,9 +53,11 @@ export const AssetCard = ({
           {name || ''}
         </p>
       </div>
-      <Button variant="ghostSecondary" size="icon" className="ml-auto mr-8" onClick={() => onRemoveItem(id)}>
-        <CloseIcon className="h-4 w-4" />
-      </Button>
+      {!isReadOnly ? (
+        <Button variant="ghostSecondary" size="icon" className="ml-auto mr-8" onClick={() => onRemoveItem(id)}>
+          <CloseIcon className="h-4 w-4" />
+        </Button>
+      ) : null}
     </div>
   );
 };

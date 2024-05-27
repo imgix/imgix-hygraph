@@ -122,6 +122,7 @@ const AssetField = () => {
         handleOnRemoveItem={handleOnRemoveItem}
         handleOnDragEnd={handleOnDragEnd}
         isDraggingDisabled={!isList}
+        isReadOnly={isReadOnly ?? false}
       />
       {!isReadOnly ? (
         <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
