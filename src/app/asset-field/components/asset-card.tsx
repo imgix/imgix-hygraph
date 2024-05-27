@@ -30,7 +30,7 @@ export const AssetCard = ({
   };
 
   return (
-    <div className="flex h-[70px] max-h-[70px] items-center rounded border border-neutral-100 shadow-md shadow-black/5">
+    <div className="flex h-[70px] max-h-[70px] items-center rounded border border-neutral-100 bg-white shadow-md shadow-black/5">
       {!isSingleAsset && (
         <div className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
           <DragHandleIcon className={cn('h-2.5 text-[0.8rem]', getCursor(isSingleAsset, isDragging))} />
