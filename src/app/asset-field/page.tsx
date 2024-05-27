@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 import findIndex from 'lodash/findIndex';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { pick, uniqueBy } from 'remeda';
+import { isDeepEqual, pick, uniqueBy } from 'remeda';
 import { AssetCardList } from './components/asset-card-list';
 import { ContentTableCell } from './components/content-table-cell';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
@@ -53,9 +53,21 @@ const AssetField = () => {
     setAssets(() => assets.map(transformAsset));
   };
 
-  // Handles "Clear"/"Clear all" button
   useEffect(() => {
-    if (value === null) setAssets(() => []);
+    // Handles "Clear"/"Clear all" button
+    if (value === null) {
+      setAssets(() => []);
+      return;
+    }
+
+    // Handles "Restore published value" feature
+    if (!isList && value.id !== assets[0]?.id) {
+      _setAssets([value]);
+    }
+
+    if (isList && !isDeepEqual(value, assets)) {
+      _setAssets(value);
+    }
   }, [value]);
 
   const handleOpenPreviewDialog = () => {
