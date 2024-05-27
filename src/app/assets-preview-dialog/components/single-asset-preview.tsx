@@ -1,7 +1,6 @@
 import { Button } from '@/components/button';
 import { StoredAsset } from '@/types';
 import { Nullable } from '@/types/common';
-import { Box, DialogContent } from '@hygraph/baukasten';
 import { useTranslation } from 'react-i18next';
 import ArrowLeftIcon from '/public/icons/arrow-left.svg';
 import CloseIcon from '/public/icons/close.svg';
@@ -23,7 +22,7 @@ const SingleAssetPreview = ({
   const { url } = singleAssetPreview;
 
   return (
-    <DialogContent padding={48} height={900} display="flex" justifyContent="center">
+    <div className="flex h-[900px] justify-center p-48">
       {isFromSingleAssetField ? (
         <Button
           variant="ghostSecondary"
@@ -44,14 +43,14 @@ const SingleAssetPreview = ({
         </Button>
       )}
 
-      <Box>
+      <div>
         <img
           alt={t('general.assetThumbnailAlt')}
           src={url}
           className="h-full w-full object-scale-down text-transparent"
         />
-      </Box>
-    </DialogContent>
+      </div>
+    </div>
   );
 };
 

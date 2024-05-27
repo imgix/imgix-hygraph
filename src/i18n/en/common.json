@@ -22,11 +22,7 @@
     "saveButtonLabel": "Save config",
     "saveButtonLoadingLabel": "Saving...",
     "requiredField": "Required",
-    "errorToast": {
-      "title": "Error",
-      "description": "An error occurred:",
-      "actionBtnTitle": "Try again"
-    }
+    "error": "Error saving config, please try again"
   },
   "assetPicker": {
     "addAssetButtonLabel": "Add asset",

@@ -5,7 +5,6 @@ import './globals.css';
 import { ReactQueryProvider } from '@/providers/ReactQueryProvider';
 import { I18nProvider } from '@/providers/I18nProvider';
 import { HygraphProvider } from '@/providers/HygraphProvider';
-import { BaukastenProvider } from '@/providers/BaukastenProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,9 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={cn(inter.variable, inter.className)}>
         <ReactQueryProvider>
           <I18nProvider>
-            <HygraphProvider>
-              <BaukastenProvider>{children}</BaukastenProvider>
-            </HygraphProvider>
+            <HygraphProvider>{children}</HygraphProvider>
           </I18nProvider>
         </ReactQueryProvider>
       </body>

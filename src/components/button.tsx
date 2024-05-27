@@ -1,6 +1,7 @@
 import { cn } from '@/util';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
+import { Spinner } from '@/components/spinner';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center rounded text-m ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 disabled:pointer-events-none disabled:opacity-50',
@@ -43,16 +44,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         {...props}
       >
-        {loading ? <Spinner /> : null}
+        {loading ? <Spinner className="mr-8" /> : null}
         {loading ? loadingText : children}
       </button>
     );
   }
 );
 Button.displayName = 'Button';
-
-const Spinner = () => {
-  return (
-    <div className="mr-8 h-4 w-4 animate-spin rounded-full border-2 border-current border-b-transparent border-l-transparent duration-500" />
-  );
-};

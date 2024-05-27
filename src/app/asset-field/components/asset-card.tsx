@@ -1,5 +1,4 @@
 import { Button } from '@/components/button';
-import { Card } from '@hygraph/baukasten';
 import CloseIcon from '/public/icons/close.svg';
 import DragHandleIcon from '/public/icons/drag-handle.svg';
 import FieldAssetIcon from '/public/icons/field-asset.svg';
@@ -23,7 +22,7 @@ export const AssetCard = ({
   imageUrl,
   isDragging
 }: AssetCardProps) => {
-  const setCursor = (isSingleAsset: boolean, isDragging: boolean | undefined) => {
+  const getCursor = (isSingleAsset: boolean, isDragging: boolean | undefined) => {
     if (isSingleAsset) {
       return 'default';
     }
@@ -36,11 +35,11 @@ export const AssetCard = ({
   };
 
   return (
-    <Card className="flex h-[70px] max-h-[70px] items-center">
+    <div className="flex h-[70px] max-h-[70px] items-center rounded border border-neutral-100 shadow-md shadow-black/5">
       {!isSingleAsset && (
         <div className="m-8 flex flex-col justify-center text-neutral-400" {...dragHandleProps}>
           <DragHandleIcon
-            style={{ fontSize: '0.8rem', cursor: setCursor(isSingleAsset, isDragging) }}
+            style={{ fontSize: '0.8rem', cursor: getCursor(isSingleAsset, isDragging) }}
             className="h-2.5"
           />
         </div>
@@ -63,7 +62,7 @@ export const AssetCard = ({
       <Button variant="ghostSecondary" size="icon" className="ml-auto mr-8" onClick={() => onRemoveItem(id)}>
         <CloseIcon className="h-4 w-4" />
       </Button>
-    </Card>
+    </div>
   );
 };
 

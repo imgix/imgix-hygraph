@@ -7,7 +7,6 @@ import { Nullable } from '@/types/common';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useFieldExtension } from '@hygraph/app-sdk-react';
-import { Box } from '@hygraph/baukasten';
 import { isEmpty } from 'lodash';
 import findIndex from 'lodash/findIndex';
 import { useEffect, useState } from 'react';

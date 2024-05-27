@@ -1,10 +1,10 @@
+import { Spinner } from '@/components/spinner';
 import { StoredAsset } from '@/types';
-import { Box, Spinner } from '@hygraph/baukasten';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { getResizedImgixUrl } from './asset-card';
-import FieldAssetIcon from '/public/icons/field-asset.svg';
 import Error404Icon from '/public/icons/error-404.svg';
+import FieldAssetIcon from '/public/icons/field-asset.svg';
 
 type ContentTableCellProps = {
   handleOpenPreviewDialog: () => void;
@@ -34,7 +34,7 @@ const ContentTableCellThumbnail = (asset: StoredAsset) => {
   }, [asset.url]);
 
   if (status === 'loading') {
-    return <Spinner size="spinner.xs" />;
+    return <Spinner className="h-3 w-3 text-brand-500" />;
   }
 
   if (status === 'error') {

@@ -2,9 +2,9 @@
 
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
 import { Button } from '@/components/button';
+import { Input } from '@/components/input';
 import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
 import { Select } from '@headlessui/react';
-import { Input } from '@hygraph/baukasten';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +28,7 @@ const SetupPage = () => {
     imgixSourceType
   };
 
-  const { isUpdatingConfig, updateConfig } = useUpdateAppConfig(appConfig);
+  const { isUpdatingConfig, updateConfig, isConfigUpdateError, configUpdateError } = useUpdateAppConfig();
 
   const isConfigValid = useMemo(() => {
     const { success } = configSchema.safeParse(appConfig);
@@ -106,6 +106,12 @@ const SetupPage = () => {
             />
           </div>
         </>
+      ) : null}
+
+      {isConfigUpdateError && configUpdateError ? (
+        <p className="text-m text-red-500">
+          {t('setup.error')}: {configUpdateError.message}
+        </p>
       ) : null}
 
       <Button

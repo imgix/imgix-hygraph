@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from '@/components/button';
+import { Spinner } from '@/components/spinner';
 import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Progress } from '@hygraph/baukasten';
 import { useState } from 'react';
 import { uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
@@ -95,7 +95,7 @@ function HygraphAssetDialog() {
 
         <div className="overflow-auto">
           {isLoading ? (
-            <Progress variant="slim" margin={0} />
+            <Loading />
           ) : (
             <AssetTable
               removeFromSelection={removeFromSelection}
@@ -169,7 +169,7 @@ function ImgixAssetDialog() {
 
         <div className="overflow-auto">
           {isLoading ? (
-            <Progress variant="slim" margin={0} />
+            <Loading />
           ) : (
             <AssetTable
               removeFromSelection={removeFromSelection}
@@ -228,6 +228,14 @@ function DialogFooter({
       </Button>
     </div>
   ) : null;
+}
+
+function Loading() {
+  return (
+    <div className="grid h-full w-full place-items-center text-brand-500">
+      <Spinner />
+    </div>
+  );
 }
 
 const useAssetDialog = () => {

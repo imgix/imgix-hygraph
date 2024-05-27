@@ -1,13 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
-import { useApp } from '@hygraph/app-sdk-react';
-import { useToast } from '@hygraph/baukasten';
-import { useTranslation } from 'react-i18next';
 import { AppConfig } from '@/hooks/useAppConfig';
+import { useApp } from '@hygraph/app-sdk-react';
+import { useMutation } from '@tanstack/react-query';
 
-const useUpdateAppConfig = (appConfig: AppConfig) => {
+const useUpdateAppConfig = () => {
   const app = useApp();
-  const { t } = useTranslation();
-  const showToast = useToast();
 
   const mutationFn = (appConfig: AppConfig) =>
     app.updateInstallation({
@@ -15,20 +11,14 @@ const useUpdateAppConfig = (appConfig: AppConfig) => {
       config: appConfig
     });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn,
-    onError: (error: Error) => {
-      showToast({
-        variantColor: 'error',
-        title: t('setup.errorToast.title'),
-        description: `${t('setup.errorToast.description')} ${error.message}`,
-        actionBtnTitle: t('setup.errorToast.actionBtnTitle'),
-        onClick: () => mutate(appConfig)
-      });
-    }
-  });
+  const { mutate, isPending, isError, error } = useMutation({ mutationFn });
 
-  return { isUpdatingConfig: isPending, updateConfig: mutate };
+  return {
+    isUpdatingConfig: isPending,
+    updateConfig: mutate,
+    isConfigUpdateError: isError,
+    configUpdateError: error
+  };
 };
 
 export { useUpdateAppConfig };
