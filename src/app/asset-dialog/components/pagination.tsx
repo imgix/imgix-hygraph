@@ -1,5 +1,6 @@
 import { Button } from '@/components/button';
 import { Select } from '@headlessui/react';
+import { useState } from 'react';
 
 export const Pagination = ({
   page,
@@ -31,6 +32,21 @@ export const Pagination = ({
     }
   };
 
+  const clampPage = (page: number) => {
+    if (page < 1) return 1;
+    if (page > pageCount) return pageCount;
+    return page;
+  };
+
+  const flushPage = () => {
+    const page = Number(pageInput);
+    const clamped = clampPage(page);
+    setPage(clamped);
+    setPageInput(String(clamped));
+  };
+
+  const [pageInput, setPageInput] = useState(String(page));
+
   return (
     <div className="flex items-center justify-between p-4 text-m text-slate-500">
       <p>{totalItems} entries</p>
@@ -44,11 +60,19 @@ export const Pagination = ({
           <span>Page</span>
           <input
             className="w-[50px] rounded-sm border border-slate-300 py-1 text-center text-black"
-            value={page}
+            value={pageInput}
             type="number"
             min={1}
             max={pageCount}
-            onChange={(e) => setPage(Number(e.target.value))}
+            onChange={(e) => {
+              setPageInput(e.target.value);
+            }}
+            onBlur={flushPage}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                flushPage();
+              }
+            }}
           />
           <span>of {pageCount}</span>
         </span>
