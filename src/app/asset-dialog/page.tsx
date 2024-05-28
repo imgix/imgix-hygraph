@@ -6,7 +6,7 @@ import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { hygraphAssetToAsset, imgixAssetToAsset } from '@/util';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isNullish, uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
@@ -48,11 +48,12 @@ function HygraphAssetDialog() {
     page,
     setResultsPerPage,
     setPage,
-    configuration
+    configuration,
+    query,
+    setQuery,
+    debouncedQuery
   } = useAssetDialog();
 
-  const [query, setQuery] = useState('');
-  const [debouncedQuery] = useDebounceValue(query, 250);
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
   const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
 
@@ -153,11 +154,11 @@ function ImgixAssetDialog() {
     page,
     resultsPerPage,
     setResultsPerPage,
-    setPage
+    setPage,
+    query,
+    setQuery,
+    debouncedQuery
   } = useAssetDialog();
-
-  const [query, setQuery] = useState('');
-  const [debouncedQuery] = useDebounceValue(query, 250);
 
   const assetsQuery = useImgixAssets({
     apiKey: configuration.imgixToken,
@@ -302,6 +303,13 @@ const useAssetDialog = () => {
     addToSelection([asset]);
   };
 
+  const [query, setQuery] = useState('');
+  const [debouncedQuery] = useDebounceValue(query, 250);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQuery]);
+
   return {
     selectedAssets,
     addToSelection,
@@ -314,6 +322,9 @@ const useAssetDialog = () => {
     page,
     closeDialogWithResult: onCloseDialog,
     isSingleSelect: isSingleSelect,
+    query,
+    setQuery,
+    debouncedQuery,
     ...rest
   };
 };
