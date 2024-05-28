@@ -1,15 +1,14 @@
 import { Button } from '@/components/button';
-import { StoredAsset } from '@/types';
-import { Nullable } from '@/types/common';
+import { Nullable, StoredAsset } from '@/types';
 import { useTranslation } from 'react-i18next';
 import CloseIcon from '/public/icons/close.svg';
 import FieldAssetIcon from '/public/icons/field-asset.svg';
 
-interface MultipleAssetsPreview {
+type MultipleAssetsPreview = {
   assets: StoredAsset[];
   onCloseDialog: (assets: Nullable<StoredAsset[]>) => void;
   handleClick: (asset: StoredAsset) => void;
-}
+};
 
 const MultipleAssetsPreview = ({ assets, onCloseDialog, handleClick }: MultipleAssetsPreview) => {
   return (

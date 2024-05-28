@@ -1,3 +1,5 @@
+export type Nullable<T> = T | null;
+
 export type HygraphAsset = {
   createdAt: string;
   fileName: string;

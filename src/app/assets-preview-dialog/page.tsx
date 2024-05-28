@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
-import { Nullable } from '@/types/common';
-import { StoredAsset } from '@/types';
+import { Nullable, StoredAsset } from '@/types';
 import { SingleAssetPreview } from './components/single-asset-preview';
 import { MultipleAssetsPreview } from './components/multiple-assets-preview';
 

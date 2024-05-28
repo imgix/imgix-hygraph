@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import common from '@/i18n/en/common.json';
@@ -20,9 +20,7 @@ i18n.use(initReactI18next).init({
   }
 });
 
-interface I18nProviderProps {
-  children: ReactNode;
-}
+type I18nProviderProps = PropsWithChildren;
 
 const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   const [isInitialized, setInitialized] = useState(false);

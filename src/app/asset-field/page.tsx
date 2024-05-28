@@ -2,8 +2,7 @@
 
 import { Button } from '@/components/button';
 import { useAppConfig } from '@/hooks/useAppConfig';
-import { Asset, StoredAsset } from '@/types';
-import { Nullable } from '@/types/common';
+import { Asset, Nullable, StoredAsset } from '@/types';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useFieldExtension } from '@hygraph/app-sdk-react';

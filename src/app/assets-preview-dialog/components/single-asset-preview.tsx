@@ -1,16 +1,15 @@
 import { Button } from '@/components/button';
-import { StoredAsset } from '@/types';
-import { Nullable } from '@/types/common';
+import { Nullable, StoredAsset } from '@/types';
 import { useTranslation } from 'react-i18next';
 import ArrowLeftIcon from '/public/icons/arrow-left.svg';
 import CloseIcon from '/public/icons/close.svg';
 
-interface SingleAssetPreview {
+type SingleAssetPreview = {
   singleAssetPreview: StoredAsset;
   onCloseDialog: (assets: Nullable<StoredAsset[]>) => void;
   isFromSingleAssetField: boolean;
   setSingleAssetPreview: (asset: Nullable<StoredAsset>) => void;
-}
+};
 
 const SingleAssetPreview = ({
   singleAssetPreview,
