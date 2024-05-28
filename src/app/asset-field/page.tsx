@@ -30,7 +30,7 @@ const AssetField = () => {
     isReadOnly
   } = useFieldExtension();
 
-  const value = _value as Nullable<StoredAsset | StoredAsset[]>;
+  const value = _value as Nullable<StoredAsset | StoredAsset[] | ''>;
 
   const [assets, _setAssets] = useState(() => getInitialAssetsValue(value));
 
@@ -55,7 +55,7 @@ const AssetField = () => {
 
   useEffect(() => {
     // Handles "Clear"/"Clear all" button
-    if (isNullish(value)) {
+    if (isNullish(value) || value === '') {
       setAssets(() => []);
       return;
     }
@@ -148,8 +148,8 @@ const AssetField = () => {
   );
 };
 
-const getInitialAssetsValue = (value: Nullable<StoredAsset | StoredAsset[]>) => {
-  const fieldValue = isNullish(value) ? null : value;
+const getInitialAssetsValue = (value: Nullable<StoredAsset | StoredAsset[] | ''>) => {
+  const fieldValue = isNullish(value) || value === '' ? null : value;
 
   if (isArray(fieldValue)) {
     return fieldValue;
