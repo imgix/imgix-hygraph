@@ -26,6 +26,7 @@
   },
   "assetPicker": {
     "addAssetButtonLabel": "Add asset",
+    "addAssetsButtonLabel": "Add assets",
     "updateAssetButtonLabel": "Update asset",
     "passSelectionButtonLabel": "Close and pass selection"
   },

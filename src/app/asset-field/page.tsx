@@ -110,6 +110,18 @@ const AssetField = () => {
     });
   };
 
+  const getLabel = () => {
+    if (isList) {
+      return t('assetPicker.addAssetsButtonLabel');
+    }
+
+    if (assets.length === 0) {
+      return t('assetPicker.addAssetButtonLabel');
+    }
+
+    return t('assetPicker.updateAssetButtonLabel');
+  };
+
   if (isTableCell) {
     return <ContentTableCell assets={assets} handleOpenPreviewDialog={handleOpenPreviewDialog} />;
   }
@@ -127,11 +139,7 @@ const AssetField = () => {
         <Button className="mt-2 w-full" variant="dashed" onClick={handleOpenAssetManagerDialog}>
           <div className="flex items-center space-x-1">
             <FieldRelationIcon className="h-4 w-4" />
-            <span>
-              {isList || assets.length === 0
-                ? t('assetPicker.addAssetButtonLabel')
-                : t('assetPicker.updateAssetButtonLabel')}
-            </span>
+            <span>{getLabel()}</span>
           </div>
         </Button>
       ) : null}
