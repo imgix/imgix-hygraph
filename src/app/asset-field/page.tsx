@@ -6,11 +6,10 @@ import { Asset, Nullable, StoredAsset } from '@/types';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useFieldExtension } from '@hygraph/app-sdk-react';
-import { isEmpty } from 'lodash';
 import findIndex from 'lodash/findIndex';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isDeepEqual, pick, uniqueBy } from 'remeda';
+import { isArray, isDeepEqual, isNullish, pick, uniqueBy } from 'remeda';
 import { AssetCardList } from './components/asset-card-list';
 import { ContentTableCell } from './components/content-table-cell';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
@@ -25,11 +24,13 @@ const AssetField = () => {
   const {
     openDialog,
     onChange,
-    value,
+    value: _value,
     field: { isList },
     isTableCell,
     isReadOnly
   } = useFieldExtension();
+
+  const value = _value as Nullable<StoredAsset | StoredAsset[]>;
 
   const [assets, _setAssets] = useState(() => getInitialAssetsValue(value));
 
@@ -54,18 +55,18 @@ const AssetField = () => {
 
   useEffect(() => {
     // Handles "Clear"/"Clear all" button
-    if (value === null) {
+    if (isNullish(value)) {
       setAssets(() => []);
       return;
     }
 
     // Handles "Restore published value" feature
-    if (!isList && value.id !== assets[0]?.id) {
-      _setAssets([value]);
+    if (isList && isArray(value) && !isDeepEqual(value, assets)) {
+      _setAssets(value);
     }
 
-    if (isList && !isDeepEqual(value, assets)) {
-      _setAssets(value);
+    if (!isList && !isArray(value) && value.id !== assets[0]?.id) {
+      _setAssets([value]);
     }
   }, [value]);
 
@@ -148,9 +149,9 @@ const AssetField = () => {
 };
 
 const getInitialAssetsValue = (value: Nullable<StoredAsset | StoredAsset[]>) => {
-  const fieldValue = isEmpty(value) ? null : value;
+  const fieldValue = isNullish(value) ? null : value;
 
-  if (Array.isArray(fieldValue)) {
+  if (isArray(fieldValue)) {
     return fieldValue;
   }
 
