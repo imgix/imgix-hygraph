@@ -47,17 +47,16 @@ const SetupPage = () => {
     handleSubmit,
     setError,
     watch,
-    formState: { errors, isValid, isSubmitting }
+    formState: { errors, isSubmitting }
   } = useForm({
     resolver: zodResolver(schema),
-    mode: 'onBlur',
     defaultValues: config
   });
 
   const { isUpdatingConfig, updateConfig, isConfigUpdateError, configUpdateError } = useUpdateAppConfig();
 
   const isLoading = isSubmitting || isUpdatingConfig;
-  const blockSubmit = isLoading || !isValid;
+  const blockSubmit = isLoading;
 
   return (
     <form
