@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import HygraphIcon from '/public/hygraph-icon.svg';
 import ExteralLinkIcon from '/public/icons/external-link.svg';
 import ImgixIcon from '/public/imgix-icon.png';
+import ChevronDownIcon from '/public/icons/chevron-down.svg';
 
 const SetupPage = () => {
   const config = useAppConfig();
@@ -59,14 +60,17 @@ const SetupPage = () => {
             </a>
           </p>
         </label>
-        <Select
-          value={imgixSourceType}
-          onChange={(e) => setImgixSourceType(e.target.value as 'hygraph-webfolder' | 'other')}
-          className="h-10 w-full rounded-sm border border-slate-300 px-3 text-black"
-        >
-          <option value="hygraph-webfolder">Webfolder</option>
-          <option value="other">Other</option>
-        </Select>
+        <div className="relative">
+          <Select
+            value={imgixSourceType}
+            onChange={(e) => setImgixSourceType(e.target.value as 'hygraph-webfolder' | 'other')}
+            className="h-10 w-full appearance-none rounded-sm border border-slate-300 px-3 text-black"
+          >
+            <option value="hygraph-webfolder">Webfolder</option>
+            <option value="other">Other</option>
+          </Select>
+          <ChevronDownIcon className="pointer-events-none absolute right-2.5 top-3 size-4" />
+        </div>
       </div>
 
       <div className="space-y-1">
