@@ -9,11 +9,11 @@
     },
     "apiKey": {
       "label": "API key",
-      "hint": "Needs \"Sources\" and \"Asset Manager Browse\" permissions"
+      "hint": "Needs \"Asset Manager Browse\" permission"
     },
     "sourceId": {
       "label": "Source ID",
-      "hint": "Required for non-webfolder sources"
+      "hint": "Required"
     },
     "sourceType": {
       "label": "Source type",

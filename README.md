@@ -48,7 +48,7 @@ Please refer to the [imgix documentation](https://docs.imgix.com/setup/creating-
 
 2. In the source URL field, enter your imgix source domain, prefixed with `https://`. For example: `https://my-assets.imgix.net` if you used `my-assets` during the creation of your imgix source.
 
-3. Obtain a new imgix API key. You can create it using the dropdown menu in the top right corner of the imgix dashboard, then pressing "API Keys" and "Generate new key". The permissions that are necessary for the app to access your assets are "Sources" and "Asset Manager Browse".
+3. Obtain a new imgix API key. You can create it using the dropdown menu in the top right corner of the imgix dashboard, then pressing "API Keys" and "Generate new key". The permission that is necessary for the app to access your assets is "Asset Manager Browse".
 
 4. Put the API key in the "API Key" field.
 
