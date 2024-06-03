@@ -1,5 +1,14 @@
 # Hygraph Imgix App
 
+## Known limitations
+
+> [!WARNING]  
+> These are known limitations due to the way Hygraph/our app works. Please read these carefully before using this app.
+
+- If you replace an asset's file in Hygraph, it will not update and show the old version instead. Please delete the asset completely and create a new one if you want to change the displayed image.
+
+- Sometimes fields might be clipped due to a bug in Hygraph. The button to add or change assets might not be visible then. Please refresh the page to resolve the issue. If the issue still persists after a refresh report this bug to Imgix.
+
 ## Installation
 
 This app can be installed in your Hygraph project from the Hygraph Marketplace.
