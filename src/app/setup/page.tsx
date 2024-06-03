@@ -104,7 +104,19 @@ const SetupPage = () => {
           <HygraphIcon className="h-48" />
         </div>
 
-        <p className="leading-normal text-slate-700">{t('setup.description')}</p>
+        <p className="leading-normal text-slate-700">
+          This app allows you to easily use imgix assets in Hygraph. For more information about configuring the app, see
+          our{' '}
+          <a
+            className="text-black underline"
+            href="https://docs.imgix.com/libraries#plugins"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <span>documentation</span>
+            <ExteralLinkIcon className="ml-1 inline-block size-5" />
+          </a>
+        </p>
       </div>
 
       <div className="space-y-1">
@@ -113,7 +125,7 @@ const SetupPage = () => {
           <p className="flex text-xs text-slate-500">
             <a href="https://docs.imgix.com/setup/creating-sources" target="_blank" rel="noreferrer">
               <span>{t('setup.sourceType.hint')}</span>
-              <ExteralLinkIcon className="ml-1 inline-block h-4 w-4" />
+              <ExteralLinkIcon className="ml-1 inline-block size-4" />
             </a>
           </p>
         </label>

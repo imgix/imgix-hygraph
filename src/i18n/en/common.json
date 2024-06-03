@@ -3,7 +3,6 @@
     "assetThumbnailAlt": "Asset thumbnail"
   },
   "setup": {
-    "description": "This app allows you to easily use imgix assets in Hygraph. Please provide the following details to get started:",
     "baseUrl": {
       "label": "Source URL"
     },
