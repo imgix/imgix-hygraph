@@ -212,7 +212,6 @@ const TableHeader = ({
 }) => {
   const bind = useDrag(
     (state) => {
-      console.log('dragging', name);
       onResize?.(state.delta[0]);
     },
     {
