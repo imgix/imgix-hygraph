@@ -2,8 +2,9 @@ import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
 import { Asset } from '@/types';
 import { cn } from '@/util';
+import { useDrag } from '@use-gesture/react';
 import prettyBytes from 'pretty-bytes';
-import { type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
 
@@ -24,11 +25,26 @@ export function AssetTable({
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
+  const [w, setW] = useState(120);
+  const bind = useDrag(
+    (event) => {
+      setW((w) => {
+        return w + event.delta[0];
+      });
+    },
+    {
+      axis: 'x',
+      bounds: {
+        left: 0
+      }
+    }
+  );
+
   return (
     <table>
       <thead>
         <tr className="h-[28px] w-full border-b shadow-sm">
-          <TableHeader className="w-[60px]">
+          <TableHeader>
             {!isSingleSelect ? (
               <div className="grid place-items-center">
                 <Checkbox
@@ -44,9 +60,12 @@ export function AssetTable({
               </div>
             ) : null}
           </TableHeader>
-          <TableHeader className="w-[80px]">Preview</TableHeader>
+          <TableHeader>Preview</TableHeader>
           <TableHeader>ID</TableHeader>
-          <TableHeader>Created At</TableHeader>
+          <TableHeader>
+            Created At
+            <div className="absolute right-0 top-0 h-[28px] w-10 cursor-ew-resize" {...bind()} />
+          </TableHeader>
           <TableHeader>Created By</TableHeader>
           <TableHeader>Updated At</TableHeader>
           <TableHeader>Updated By</TableHeader>
@@ -68,7 +87,9 @@ export function AssetTable({
               <TableCell className="min-w-[60px]">
                 <div className="grid place-items-center">
                   {isSingleSelect ? (
-                    <SelectAssetButton onClick={() => onSelect(asset)} />
+                    <Button variant="ghost" size="icon" onClick={() => onSelect(asset)}>
+                      <FieldRelationIcon className="h-4 w-4" />
+                    </Button>
                   ) : (
                     <Checkbox
                       checked={isSelected}
@@ -93,7 +114,17 @@ export function AssetTable({
                   {asset.id}
                 </div>
               </TableCell>
-              <TableCell>{formatDate(asset.createdAt)}</TableCell>
+
+              <TableCell
+                style={{
+                  width: `${w}px`,
+                  minWidth: `${w}px`,
+                  maxWidth: `${w}px`
+                }}
+              >
+                {formatDate(asset.createdAt)}
+              </TableCell>
+
               <TableCell>
                 {asset.createdBy ? <User name={asset.createdBy.name} picture={asset.createdBy.picture} /> : <p>-</p>}
               </TableCell>
@@ -121,29 +152,28 @@ export function AssetTable({
   );
 }
 
-const TableHeader = ({ children, className }: { children?: ReactNode; className?: string }) => {
-  return (
-    <th className={cn('w-[120px] border-r px-2 text-left text-xs font-medium text-slate-500', className)}>
-      {children}
-    </th>
-  );
+const TableHeader = ({ children }: { children?: ReactNode }) => {
+  return <th className="relative border-r px-2 text-left text-xs font-medium text-slate-500">{children}</th>;
 };
 
-const TableCell = ({ children, className }: { children?: ReactNode; className?: string }) => {
+const TableCell = ({
+  children,
+  className,
+  style
+}: {
+  children?: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) => {
   return (
-    <td className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap py-0 pl-2 text-m', className)}>
+    <td
+      className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap py-0 pl-2 text-m', className)}
+      style={style}
+    >
       {children}
     </td>
   );
 };
-
-function SelectAssetButton({ onClick }: { onClick: () => void }) {
-  return (
-    <Button variant="ghost" size="icon" onClick={onClick}>
-      <FieldRelationIcon className="h-4 w-4" />
-    </Button>
-  );
-}
 
 const formatDate = (date: Date) => {
   return `${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`;
