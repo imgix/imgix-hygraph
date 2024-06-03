@@ -18,11 +18,19 @@ import ImgixIcon from '/public/imgix-icon.png';
 const schema = z.union([
   z.object({
     imgixSourceType: z.literal('hygraph-webfolder'),
-    imgixBase: z.string().trim().url()
+    imgixBase: z
+      .string()
+      .min(1, { message: 'Required' })
+      .trim()
+      .url({ message: 'Invalid URL. Provide the full URL, including the protocol (e.g. https://)' })
   }),
   z.object({
     imgixSourceType: z.literal('other'),
-    imgixBase: z.string().trim().url(),
+    imgixBase: z
+      .string()
+      .min(1, { message: 'Required' })
+      .trim()
+      .url({ message: 'Invalid URL. Provide the full URL, including the protocol (e.g. https://)' }),
     imgixToken: z.string().min(1, { message: 'Required' }),
     imgixSourceId: z.string().min(1, { message: 'Required' })
   })
@@ -126,7 +134,7 @@ const SetupPage = () => {
           <p>{t('setup.baseUrl.label')}</p>
           <p className="text-xs text-slate-500">{t('setup.requiredField')}</p>
         </label>
-        <Input {...register('imgixBase')} required />
+        <Input {...register('imgixBase')} />
         {errors.imgixBase ? <p className="text-sm text-red-500">{errors.imgixBase.message}</p> : null}
       </div>
 
