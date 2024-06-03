@@ -7,6 +7,51 @@ import { useCallback, useMemo, useState, type CSSProperties, type ReactNode } fr
 import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
 
+type Column =
+  | 'action'
+  | 'preview'
+  | 'id'
+  | 'createdAt'
+  | 'createdBy'
+  | 'updatedAt'
+  | 'updatedBy'
+  | 'handle'
+  | 'fileName'
+  | 'height'
+  | 'width'
+  | 'fileSize'
+  | 'mimeType';
+
+const resizableColumns: [Column, string][] = [
+  ['id', 'ID'],
+  ['createdAt', 'Created At'],
+  ['createdBy', 'Created By'],
+  ['updatedAt', 'Updated At'],
+  ['updatedBy', 'Updated By'],
+  ['handle', 'Handle'],
+  ['fileName', 'File Name'],
+  ['height', 'Height'],
+  ['width', 'Width'],
+  ['fileSize', 'Size'],
+  ['mimeType', 'Mime Type']
+];
+
+const defaultColumnWidths: Record<Column, number> = {
+  action: 60,
+  preview: 80,
+  id: 120,
+  createdAt: 120,
+  createdBy: 120,
+  updatedAt: 120,
+  updatedBy: 120,
+  handle: 120,
+  fileName: 120,
+  height: 120,
+  width: 120,
+  fileSize: 120,
+  mimeType: 120
+};
+
 export function AssetTable({
   removeFromSelection,
   onSelect,
@@ -24,24 +69,10 @@ export function AssetTable({
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
-  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({
-    action: 60,
-    preview: 80,
-    id: 120,
-    createdAt: 120,
-    createdBy: 120,
-    updatedAt: 120,
-    updatedBy: 120,
-    handle: 120,
-    fileName: 120,
-    height: 120,
-    width: 120,
-    size: 120,
-    mimeType: 120
-  });
+  const [columnWidths, setColumnWidths] = useState<Record<Column, number>>(defaultColumnWidths);
 
   const handleResize = useCallback(
-    (columnName: string) => (deltaX: number) => {
+    (columnName: Column) => (deltaX: number) => {
       setColumnWidths((old) => {
         const oldWidth = old[columnName];
         const newWidth = oldWidth + deltaX;
@@ -85,19 +116,7 @@ export function AssetTable({
 
           <TableHeader name="preview">Preview</TableHeader>
 
-          {[
-            ['id', 'ID'],
-            ['createdAt', 'Created At'],
-            ['createdBy', 'Created By'],
-            ['updatedAt', 'Updated At'],
-            ['updatedBy', 'Updated By'],
-            ['handle', 'Handle'],
-            ['fileName', 'File Name'],
-            ['height', 'Height'],
-            ['width', 'Width'],
-            ['fileSize', 'Size'],
-            ['mimeType', 'Mime Type']
-          ].map(([name, label]) => (
+          {resizableColumns.map(([name, label]) => (
             <TableHeader key={name} name={name} resizable onResize={handleResize(name)}>
               {label}
             </TableHeader>
@@ -189,7 +208,7 @@ const TableHeader = ({
   children?: ReactNode;
   resizable?: boolean;
   onResize?: (deltaX: number) => void;
-  name: string;
+  name: Column;
 }) => {
   const bind = useDrag(
     (state) => {
@@ -215,7 +234,7 @@ const TableHeader = ({
   );
 };
 
-const TableCell = ({ children, name }: { children?: ReactNode; name: string }) => {
+const TableCell = ({ children, name }: { children?: ReactNode; name: Column }) => {
   return (
     <td className="overflow-hidden whitespace-nowrap py-0 pl-2 text-m" style={getCellStyle(name)}>
       {children}
@@ -223,7 +242,7 @@ const TableCell = ({ children, name }: { children?: ReactNode; name: string }) =
   );
 };
 
-const getCellStyle = (columnName: string) => {
+const getCellStyle = (columnName: Column) => {
   const width = `calc(var(--${columnName}-width) * 1px)`;
 
   return {
