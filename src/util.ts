@@ -18,7 +18,7 @@ export function cn(...args: ClassValue[]) {
 export function hygraphAssetToAsset(asset: HygraphAsset, sourceBaseUrl: string): Asset {
   const getResizedHygraphUrl = (url: string, handle: string) => {
     const urlBase = url.slice(0, -handle.length);
-    const formatParams = 'output=format:jpg/resize=width:59,height:59,fit:crop/';
+    const formatParams = 'output=format:jpg/resize=width:120,height:120,fit:crop/';
     return urlBase + formatParams + handle;
   };
 
@@ -60,6 +60,6 @@ export function imgixAssetToAsset(asset: ImgixAsset, sourceBaseUrl: string): Ass
     fileSize: asset.attributes.file_size,
     mimeType: asset.attributes.content_type,
     url: url,
-    thumbnail: `${url}?w=59&h=59&fit=crop`
+    thumbnail: `${url}?w=120&h=120&fit=crop`
   };
 }
