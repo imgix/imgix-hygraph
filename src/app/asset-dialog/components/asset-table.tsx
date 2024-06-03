@@ -1,10 +1,9 @@
 import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
 import { Asset } from '@/types';
-import { cn } from '@/util';
 import { useDrag } from '@use-gesture/react';
 import prettyBytes from 'pretty-bytes';
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
 
@@ -25,13 +24,49 @@ export function AssetTable({
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
-  const [w, setW] = useState(120);
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({
+    action: 60,
+    preview: 80,
+    id: 120,
+    createdAt: 120,
+    createdBy: 120,
+    updatedAt: 120,
+    updatedBy: 120,
+    handle: 120,
+    fileName: 120,
+    height: 120,
+    width: 120,
+    size: 120,
+    mimeType: 120
+  });
+
+  const handleResize = useCallback(
+    (columnName: string) => (deltaX: number) => {
+      setColumnWidths((old) => {
+        const oldWidth = old[columnName];
+        const newWidth = oldWidth + deltaX;
+        return {
+          ...old,
+          [columnName]: newWidth
+        };
+      });
+    },
+    [setColumnWidths]
+  );
+
+  const columnWidthVariablesStyle = useMemo(() => {
+    const propertiesList = Object.entries(columnWidths).map(([columnName, width]) => {
+      return [`--${columnName}-width`, String(width)];
+    });
+
+    return Object.fromEntries(propertiesList) as CSSProperties;
+  }, [columnWidths]);
 
   return (
-    <table>
+    <table style={columnWidthVariablesStyle}>
       <thead>
         <tr className="h-[28px] w-full border-b shadow-sm">
-          <TableHeader>
+          <TableHeader name="action">
             {!isSingleSelect ? (
               <div className="grid place-items-center">
                 <Checkbox
@@ -47,30 +82,26 @@ export function AssetTable({
               </div>
             ) : null}
           </TableHeader>
-          <TableHeader>Preview</TableHeader>
-          <TableHeader>ID</TableHeader>
-          <TableHeader
-            resizable
-            onResize={setW}
-            style={{
-              // @ts-ignore
-              '--created-at-width': `${w}`,
-              width: `calc(var(--created-at-width) * 1px)`,
-              minWidth: `calc(var(--created-at-width) * 1px)`,
-              maxWidth: `calc(var(--created-at-width) * 1px)`
-            }}
-          >
-            Created At
-          </TableHeader>
-          <TableHeader>Created By</TableHeader>
-          <TableHeader>Updated At</TableHeader>
-          <TableHeader>Updated By</TableHeader>
-          <TableHeader>Handle</TableHeader>
-          <TableHeader>File Name</TableHeader>
-          <TableHeader>Height</TableHeader>
-          <TableHeader>Width</TableHeader>
-          <TableHeader>Size</TableHeader>
-          <TableHeader>Mime Type</TableHeader>
+
+          <TableHeader name="preview">Preview</TableHeader>
+
+          {[
+            ['id', 'ID'],
+            ['createdAt', 'Created At'],
+            ['createdBy', 'Created By'],
+            ['updatedAt', 'Updated At'],
+            ['updatedBy', 'Updated By'],
+            ['handle', 'Handle'],
+            ['fileName', 'File Name'],
+            ['height', 'Height'],
+            ['width', 'Width'],
+            ['fileSize', 'Size'],
+            ['mimeType', 'Mime Type']
+          ].map(([name, label]) => (
+            <TableHeader key={name} name={name} resizable onResize={handleResize(name)}>
+              {label}
+            </TableHeader>
+          ))}
         </tr>
       </thead>
 
@@ -80,7 +111,7 @@ export function AssetTable({
 
           return (
             <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
-              <TableCell className="min-w-[60px]">
+              <TableCell name="action">
                 <div className="grid place-items-center">
                   {isSingleSelect ? (
                     <Button variant="ghost" size="icon" onClick={() => onSelect(asset)}>
@@ -100,46 +131,47 @@ export function AssetTable({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="min-w-[80px]">
+
+              <TableCell name="preview">
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
               </TableCell>
 
-              <TableCell>
-                <div className="w-full max-w-[110px] overflow-hidden text-ellipsis rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-500">
+              <TableCell name="id">
+                <div className="w-full max-w-fit overflow-hidden text-ellipsis rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-500">
                   {asset.id}
                 </div>
               </TableCell>
 
-              <TableCell
-                style={{
-                  width: `${w}px`,
-                  minWidth: `${w}px`,
-                  maxWidth: `${w}px`
-                }}
-              >
-                {formatDate(asset.createdAt)}
-              </TableCell>
+              <TableCell name="createdAt">{formatDate(asset.createdAt)}</TableCell>
 
-              <TableCell>
+              <TableCell name="createdBy">
                 {asset.createdBy ? <User name={asset.createdBy.name} picture={asset.createdBy.picture} /> : <p>-</p>}
               </TableCell>
-              <TableCell>{asset.updatedAt ? formatDate(asset.updatedAt) : '-'}</TableCell>
-              <TableCell>
+
+              <TableCell name="updatedAt">{asset.updatedAt ? formatDate(asset.updatedAt) : '-'}</TableCell>
+
+              <TableCell name="updatedBy">
                 {asset.updatedBy ? <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} /> : '-'}
               </TableCell>
-              <TableCell>{asset.handle}</TableCell>
-              <TableCell>{asset.fileName}</TableCell>
-              <TableCell>
+
+              <TableCell name="handle">{asset.handle}</TableCell>
+
+              <TableCell name="fileName">{asset.fileName}</TableCell>
+
+              <TableCell name="height">
                 <pre>{asset.height ?? '-'}</pre>
               </TableCell>
-              <TableCell>
+
+              <TableCell name="width">
                 <pre>{asset.width ?? '-'}</pre>
               </TableCell>
-              <TableCell>
+
+              <TableCell name="fileSize">
                 <pre>{prettyBytes(asset.fileSize)}</pre>
               </TableCell>
-              <TableCell>{asset.mimeType}</TableCell>
+
+              <TableCell name="mimeType">{asset.mimeType}</TableCell>
             </tr>
           );
         })}
@@ -152,24 +184,22 @@ const TableHeader = ({
   children,
   resizable,
   onResize,
-  style
+  name
 }: {
   children?: ReactNode;
   resizable?: boolean;
-  onResize?: (setW: (oldWidth: number) => number) => void;
-  style?: CSSProperties;
+  onResize?: (deltaX: number) => void;
+  name: string;
 }) => {
   const bind = useDrag(
-    (event) => {
-      onResize?.((old) => {
-        const newWidth = old + event.delta[0];
-        return Math.max(newWidth, 120);
-      });
+    (state) => {
+      console.log('dragging', name);
+      onResize?.(state.delta[0]);
     },
     {
-      axis: 'x',
       bounds: {
-        left: 0
+        // base width is 120 so -40 is capping the width to 80
+        left: -40
       }
     }
   );
@@ -177,31 +207,30 @@ const TableHeader = ({
   return (
     <th
       className="relative overflow-hidden text-ellipsis text-nowrap border-r px-2 text-left text-xs font-medium text-slate-500"
-      style={style}
+      style={getCellStyle(name)}
     >
       {children}
-      {resizable ? <div className="absolute right-0 top-0 h-full w-5 cursor-ew-resize" {...bind()} /> : null}
+      {resizable ? <div className="absolute right-0 top-0 h-full w-5 cursor-ew-resize touch-none" {...bind()} /> : null}
     </th>
   );
 };
 
-const TableCell = ({
-  children,
-  className,
-  style
-}: {
-  children?: ReactNode;
-  className?: string;
-  style?: CSSProperties;
-}) => {
+const TableCell = ({ children, name }: { children?: ReactNode; name: string }) => {
   return (
-    <td
-      className={cn('min-w-[120px] max-w-[120px] overflow-hidden whitespace-nowrap py-0 pl-2 text-m', className)}
-      style={style}
-    >
+    <td className="overflow-hidden whitespace-nowrap py-0 pl-2 text-m" style={getCellStyle(name)}>
       {children}
     </td>
   );
+};
+
+const getCellStyle = (columnName: string) => {
+  const width = `calc(var(--${columnName}-width) * 1px)`;
+
+  return {
+    width: width,
+    minWidth: width,
+    maxWidth: width
+  };
 };
 
 const formatDate = (date: Date) => {
