@@ -26,19 +26,6 @@ export function AssetTable({
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
   const [w, setW] = useState(120);
-  const bind = useDrag(
-    (event) => {
-      setW((w) => {
-        return w + event.delta[0];
-      });
-    },
-    {
-      axis: 'x',
-      bounds: {
-        left: 0
-      }
-    }
-  );
 
   return (
     <table>
@@ -62,9 +49,18 @@ export function AssetTable({
           </TableHeader>
           <TableHeader>Preview</TableHeader>
           <TableHeader>ID</TableHeader>
-          <TableHeader>
+          <TableHeader
+            resizable
+            onResize={setW}
+            style={{
+              // @ts-ignore
+              '--created-at-width': `${w}`,
+              width: `calc(var(--created-at-width) * 1px)`,
+              minWidth: `calc(var(--created-at-width) * 1px)`,
+              maxWidth: `calc(var(--created-at-width) * 1px)`
+            }}
+          >
             Created At
-            <div className="absolute right-0 top-0 h-[28px] w-10 cursor-ew-resize" {...bind()} />
           </TableHeader>
           <TableHeader>Created By</TableHeader>
           <TableHeader>Updated At</TableHeader>
@@ -152,8 +148,41 @@ export function AssetTable({
   );
 }
 
-const TableHeader = ({ children }: { children?: ReactNode }) => {
-  return <th className="relative border-r px-2 text-left text-xs font-medium text-slate-500">{children}</th>;
+const TableHeader = ({
+  children,
+  resizable,
+  onResize,
+  style
+}: {
+  children?: ReactNode;
+  resizable?: boolean;
+  onResize?: (setW: (oldWidth: number) => number) => void;
+  style?: CSSProperties;
+}) => {
+  const bind = useDrag(
+    (event) => {
+      onResize?.((old) => {
+        const newWidth = old + event.delta[0];
+        return Math.max(newWidth, 120);
+      });
+    },
+    {
+      axis: 'x',
+      bounds: {
+        left: 0
+      }
+    }
+  );
+
+  return (
+    <th
+      className="relative overflow-hidden text-ellipsis text-nowrap border-r px-2 text-left text-xs font-medium text-slate-500"
+      style={style}
+    >
+      {children}
+      {resizable ? <div className="absolute right-0 top-0 h-full w-5 cursor-ew-resize" {...bind()} /> : null}
+    </th>
+  );
 };
 
 const TableCell = ({
