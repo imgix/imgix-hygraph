@@ -3,43 +3,93 @@
 import { useUpdateAppConfig } from '@/app/setup/useUpdateAppConfig';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
-import { configSchema, useAppConfig } from '@/hooks/useAppConfig';
+import { useAppConfig } from '@/hooks/useAppConfig';
 import { Select } from '@headlessui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 import HygraphIcon from '/public/hygraph-icon.svg';
+import ChevronDownIcon from '/public/icons/chevron-down.svg';
 import ExteralLinkIcon from '/public/icons/external-link.svg';
 import ImgixIcon from '/public/imgix-icon.png';
-import ChevronDownIcon from '/public/icons/chevron-down.svg';
+
+const schema = z.union([
+  z.object({
+    imgixSourceType: z.literal('hygraph-webfolder'),
+    imgixBase: z.string().trim().url()
+  }),
+  z.object({
+    imgixSourceType: z.literal('other'),
+    imgixBase: z.string().trim().url(),
+    imgixToken: z.string().min(1, { message: 'Required' }),
+    imgixSourceId: z.string().min(1, { message: 'Required' })
+  })
+]);
+
+const listImgixSource = async (token: string, sourceId: string) => {
+  const response = await fetch(`https://api.imgix.com/api/v1/sources/${sourceId}/assets`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.status;
+};
 
 const SetupPage = () => {
   const config = useAppConfig();
   const { t } = useTranslation();
 
-  const [imgixBase, setImgixBase] = useState(config.imgixBase);
-  const [imgixToken, setImgixToken] = useState(config.imgixToken);
-  const [imgixSourceId, setImgixSourceId] = useState(config.imgixSourceId);
-  const [imgixSourceType, setImgixSourceType] = useState(config.imgixSourceType);
-
-  const newConfig = {
-    imgixBase,
-    imgixToken,
-    imgixSourceId,
-    imgixSourceType
-  };
+  const {
+    register,
+    handleSubmit,
+    setError,
+    watch,
+    formState: { errors, isValid, isSubmitting }
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: 'onBlur',
+    defaultValues: config
+  });
 
   const { isUpdatingConfig, updateConfig, isConfigUpdateError, configUpdateError } = useUpdateAppConfig();
 
-  const isConfigValid = useMemo(() => {
-    const { success } = configSchema.safeParse(newConfig);
-    return success;
-  }, [imgixBase, imgixToken]);
-
-  const isButtonDisabled = !isConfigValid;
+  const isLoading = isSubmitting || isUpdatingConfig;
+  const blockSubmit = isLoading || !isValid;
 
   return (
-    <div className="max-w-md space-y-24">
+    <form
+      className="max-w-md space-y-24"
+      onSubmit={handleSubmit(async (data) => {
+        if (data.imgixSourceType === 'other') {
+          const sourceListResult = await listImgixSource(data.imgixToken, data.imgixSourceId);
+
+          if (sourceListResult === 401) {
+            setError('imgixToken', { message: 'API key is invalid' });
+            return;
+          }
+
+          if (sourceListResult === 403) {
+            setError('imgixToken', { message: 'API key is missing required permissions' });
+            return;
+          }
+
+          if (sourceListResult === 404) {
+            setError('imgixSourceId', { message: 'Source ID is invalid' });
+            return;
+          }
+
+          if (sourceListResult !== 200) {
+            setError('imgixToken', { message: 'Unknown error validating API key' });
+            return;
+          }
+        }
+
+        updateConfig(data);
+      })}
+    >
       <div className="space-y-4">
         <div className="flex items-center space-x-4">
           <Image src={ImgixIcon} alt="imgix logo" height={48} />
@@ -62,9 +112,8 @@ const SetupPage = () => {
         </label>
         <div className="relative">
           <Select
-            value={imgixSourceType}
-            onChange={(e) => setImgixSourceType(e.target.value as 'hygraph-webfolder' | 'other')}
             className="h-10 w-full appearance-none rounded-sm border border-slate-300 px-3 text-black"
+            {...register('imgixSourceType')}
           >
             <option value="hygraph-webfolder">Webfolder</option>
             <option value="other">Other</option>
@@ -78,25 +127,19 @@ const SetupPage = () => {
           <p>{t('setup.baseUrl.label')}</p>
           <p className="text-xs text-slate-500">{t('setup.requiredField')}</p>
         </label>
-        <Input
-          value={imgixBase}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixBase(e.target.value)}
-          required
-        />
+        <Input {...register('imgixBase')} required />
+        {errors.imgixBase ? <p className="text-sm text-red-500">{errors.imgixBase.message}</p> : null}
       </div>
 
-      {imgixSourceType === 'other' ? (
+      {watch('imgixSourceType') === 'other' ? (
         <>
           <div className="space-y-1">
             <label className="text-sm">
               <p>{t('setup.apiKey.label')}</p>
               <p className="flex text-xs text-slate-500">{t('setup.apiKey.hint')}</p>
             </label>
-            <Input
-              value={imgixToken}
-              type="password"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixToken(e.target.value)}
-            />
+            <Input type="password" {...register('imgixToken')} />
+            {errors.imgixToken ? <p className="text-sm text-red-500">{errors.imgixToken.message}</p> : null}
           </div>
 
           <div className="space-y-1">
@@ -104,10 +147,8 @@ const SetupPage = () => {
               <p>{t('setup.sourceId.label')}</p>
               <p className="flex text-xs text-slate-500">{t('setup.sourceId.hint')}</p>
             </label>
-            <Input
-              value={imgixSourceId}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImgixSourceId(e.target.value)}
-            />
+            <Input {...register('imgixSourceId')} />
+            {errors.imgixSourceId ? <p className="text-sm text-red-500">{errors.imgixSourceId.message}</p> : null}
           </div>
         </>
       ) : null}
@@ -118,15 +159,10 @@ const SetupPage = () => {
         </p>
       ) : null}
 
-      <Button
-        onClick={() => updateConfig(newConfig)}
-        disabled={isButtonDisabled || isUpdatingConfig}
-        loading={isUpdatingConfig}
-        loadingText={t('setup.saveButtonLoadingLabel')}
-      >
+      <Button disabled={blockSubmit} loading={isLoading} loadingText={t('setup.saveButtonLoadingLabel')} type="submit">
         {t('setup.saveButtonLabel')}
       </Button>
-    </div>
+    </form>
   );
 };
 
