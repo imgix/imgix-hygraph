@@ -1,5 +1,6 @@
 import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
+import { Spinner } from '@/components/spinner';
 import { Asset } from '@/types';
 import { cn } from '@/util';
 import { useDrag } from '@use-gesture/react';
@@ -9,7 +10,6 @@ import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
 import OrderAscIcon from '/public/icons/order-asc.svg';
 import OrderDescIcon from '/public/icons/order-desc.svg';
-import { Spinner } from '@/components/spinner';
 
 const resizableColumns: [Column, string][] = [
   ['id', 'ID'],
@@ -61,7 +61,7 @@ export function AssetTable({
           <tr className="h-[28px] w-full border-b shadow-sm">
             <TableHeader name="action">
               {!isSingleSelect ? (
-                <div className="grid place-items-center">
+                <span className="grid w-full place-items-center">
                   <Checkbox
                     checked={allSelected}
                     onCheckedChange={() => {
@@ -72,7 +72,7 @@ export function AssetTable({
                       addToSelection(assets);
                     }}
                   />
-                </div>
+                </span>
               ) : null}
             </TableHeader>
 
@@ -100,7 +100,7 @@ export function AssetTable({
 
               return (
                 <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
-                  <TableCell name="action">
+                  <TableCell name="action" className="pl-0">
                     <div className="grid place-items-center">
                       {isSingleSelect ? (
                         <Button variant="ghost" size="icon" onClick={() => onSelect(asset)}>
@@ -121,7 +121,7 @@ export function AssetTable({
                     </div>
                   </TableCell>
 
-                  <TableCell name="preview">
+                  <TableCell name="preview" className="pl-0">
                     {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
                   </TableCell>
@@ -172,9 +172,11 @@ export function AssetTable({
         ) : null}
       </table>
 
-      <div className="grid h-full w-full place-items-center text-brand-500">
-        <Spinner />
-      </div>
+      {isLoading ? (
+        <div className="grid h-full w-full place-items-center text-brand-500">
+          <Spinner />
+        </div>
+      ) : null}
     </>
   );
 }
@@ -232,7 +234,7 @@ const TableHeader = ({
       style={getCellStyle(name)}
     >
       <div onClick={onSort} className="flex h-[25.5px] w-full select-none items-center justify-between">
-        <span>{children}</span>
+        <span className="w-full">{children}</span>
 
         {sortedBy && sortBy?.endsWith('_ASC') ? (
           <OrderAscIcon className="h-4 w-4 text-brand-500" />
@@ -246,9 +248,9 @@ const TableHeader = ({
   );
 };
 
-const TableCell = ({ children, name }: { children?: ReactNode; name: Column }) => {
+const TableCell = ({ children, name, className }: { children?: ReactNode; name: Column; className?: string }) => {
   return (
-    <td className="overflow-hidden whitespace-nowrap py-0 pl-2 text-m" style={getCellStyle(name)}>
+    <td className={cn('overflow-hidden whitespace-nowrap py-0 pl-2 text-m', className)} style={getCellStyle(name)}>
       {children}
     </td>
   );

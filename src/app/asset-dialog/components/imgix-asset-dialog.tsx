@@ -40,7 +40,7 @@ export function ImgixAssetDialog() {
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
-  const isLoading = assetsQuery.isLoading || !assets;
+  const isLoading = assetsQuery.isLoading;
 
   return (
     <div className="h-[48rem]">
