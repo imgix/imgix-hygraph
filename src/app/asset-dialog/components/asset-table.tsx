@@ -9,6 +9,7 @@ import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
 import OrderAscIcon from '/public/icons/order-asc.svg';
 import OrderDescIcon from '/public/icons/order-desc.svg';
+import { Spinner } from '@/components/spinner';
 
 const resizableColumns: [Column, string][] = [
   ['id', 'ID'],
@@ -33,7 +34,8 @@ export function AssetTable({
   addToSelection,
   sortableColumns,
   setSortBy,
-  sortBy
+  sortBy,
+  isLoading
 }: {
   removeFromSelection: (removedAssets: Asset[]) => void;
   onSelect: (asset: Asset) => void;
@@ -44,6 +46,7 @@ export function AssetTable({
   sortableColumns: Column[];
   setSortBy: (columnName: ColumnSort | null) => void;
   sortBy: ColumnSort | null;
+  isLoading: boolean;
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
@@ -52,115 +55,127 @@ export function AssetTable({
   const { isSortable, handleSort } = useSortableColumns(sortableColumns, sortBy, setSortBy);
 
   return (
-    <table style={columnWidthVariablesStyle}>
-      <thead>
-        <tr className="h-[28px] w-full border-b shadow-sm">
-          <TableHeader name="action">
-            {!isSingleSelect ? (
-              <div className="grid place-items-center">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={() => {
-                    if (allSelected) {
-                      return removeFromSelection(assets);
-                    }
-
-                    addToSelection(assets);
-                  }}
-                />
-              </div>
-            ) : null}
-          </TableHeader>
-
-          <TableHeader name="preview">Preview</TableHeader>
-
-          {resizableColumns.map(([name, label]) => (
-            <TableHeader
-              key={name}
-              name={name}
-              resizable
-              onResize={handleResize(name)}
-              onSort={isSortable(name) ? handleSort(name) : undefined}
-              sortBy={sortBy ?? undefined}
-            >
-              {label}
-            </TableHeader>
-          ))}
-        </tr>
-      </thead>
-
-      <tbody>
-        {assets.map((asset) => {
-          const isSelected = selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id);
-
-          return (
-            <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
-              <TableCell name="action">
+    <>
+      <table style={columnWidthVariablesStyle}>
+        <thead>
+          <tr className="h-[28px] w-full border-b shadow-sm">
+            <TableHeader name="action">
+              {!isSingleSelect ? (
                 <div className="grid place-items-center">
-                  {isSingleSelect ? (
-                    <Button variant="ghost" size="icon" onClick={() => onSelect(asset)}>
-                      <FieldRelationIcon className="h-4 w-4" />
-                    </Button>
-                  ) : (
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={() => {
-                        if (isSelected) {
-                          return removeFromSelection([asset]);
-                        }
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={() => {
+                      if (allSelected) {
+                        return removeFromSelection(assets);
+                      }
 
-                        onSelect(asset);
-                      }}
-                    />
-                  )}
+                      addToSelection(assets);
+                    }}
+                  />
                 </div>
-              </TableCell>
+              ) : null}
+            </TableHeader>
 
-              <TableCell name="preview">
-                {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
-              </TableCell>
+            <TableHeader name="preview">Preview</TableHeader>
 
-              <TableCell name="id">
-                <div className="w-full max-w-fit overflow-hidden text-ellipsis rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-500">
-                  {asset.id}
-                </div>
-              </TableCell>
+            {resizableColumns.map(([name, label]) => (
+              <TableHeader
+                key={name}
+                name={name}
+                resizable
+                onResize={handleResize(name)}
+                onSort={isSortable(name) ? handleSort(name) : undefined}
+                sortBy={sortBy ?? undefined}
+              >
+                {label}
+              </TableHeader>
+            ))}
+          </tr>
+        </thead>
 
-              <TableCell name="createdAt">{formatDate(asset.createdAt)}</TableCell>
+        {!isLoading ? (
+          <tbody>
+            {assets.map((asset) => {
+              const isSelected = selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id);
 
-              <TableCell name="createdBy">
-                {asset.createdBy ? <User name={asset.createdBy.name} picture={asset.createdBy.picture} /> : <p>-</p>}
-              </TableCell>
+              return (
+                <tr className="h-[60px] overflow-x-auto border-b" key={asset.id}>
+                  <TableCell name="action">
+                    <div className="grid place-items-center">
+                      {isSingleSelect ? (
+                        <Button variant="ghost" size="icon" onClick={() => onSelect(asset)}>
+                          <FieldRelationIcon className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={() => {
+                            if (isSelected) {
+                              return removeFromSelection([asset]);
+                            }
 
-              <TableCell name="updatedAt">{asset.updatedAt ? formatDate(asset.updatedAt) : '-'}</TableCell>
+                            onSelect(asset);
+                          }}
+                        />
+                      )}
+                    </div>
+                  </TableCell>
 
-              <TableCell name="updatedBy">
-                {asset.updatedBy ? <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} /> : '-'}
-              </TableCell>
+                  <TableCell name="preview">
+                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                    <img src={asset.thumbnail} className="max-h-[60px] w-[80px] object-cover" />
+                  </TableCell>
 
-              <TableCell name="handle">{asset.handle}</TableCell>
+                  <TableCell name="id">
+                    <div className="w-full max-w-fit overflow-hidden text-ellipsis rounded bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-500">
+                      {asset.id}
+                    </div>
+                  </TableCell>
 
-              <TableCell name="fileName">{asset.fileName}</TableCell>
+                  <TableCell name="createdAt">{formatDate(asset.createdAt)}</TableCell>
 
-              <TableCell name="height">
-                <pre>{asset.height ?? '-'}</pre>
-              </TableCell>
+                  <TableCell name="createdBy">
+                    {asset.createdBy ? (
+                      <User name={asset.createdBy.name} picture={asset.createdBy.picture} />
+                    ) : (
+                      <p>-</p>
+                    )}
+                  </TableCell>
 
-              <TableCell name="width">
-                <pre>{asset.width ?? '-'}</pre>
-              </TableCell>
+                  <TableCell name="updatedAt">{asset.updatedAt ? formatDate(asset.updatedAt) : '-'}</TableCell>
 
-              <TableCell name="size">
-                <pre>{prettyBytes(asset.fileSize)}</pre>
-              </TableCell>
+                  <TableCell name="updatedBy">
+                    {asset.updatedBy ? <User name={asset.updatedBy.name} picture={asset.updatedBy.picture} /> : '-'}
+                  </TableCell>
 
-              <TableCell name="mimeType">{asset.mimeType}</TableCell>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+                  <TableCell name="handle">{asset.handle}</TableCell>
+
+                  <TableCell name="fileName">{asset.fileName}</TableCell>
+
+                  <TableCell name="height">
+                    <pre>{asset.height ?? '-'}</pre>
+                  </TableCell>
+
+                  <TableCell name="width">
+                    <pre>{asset.width ?? '-'}</pre>
+                  </TableCell>
+
+                  <TableCell name="size">
+                    <pre>{prettyBytes(asset.fileSize)}</pre>
+                  </TableCell>
+
+                  <TableCell name="mimeType">{asset.mimeType}</TableCell>
+                </tr>
+              );
+            })}
+          </tbody>
+        ) : null}
+      </table>
+
+      <div className="grid h-full w-full place-items-center text-brand-500">
+        <Spinner />
+      </div>
+    </>
   );
 }
 

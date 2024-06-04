@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { isNullish } from 'remeda';
 import { HygraphSort, useHygraphAssets } from '../useHygraphAssets';
 import { AssetTable } from './asset-table';
-import { DialogFooter, DialogHeader, Loading, useAssetDialog } from './dialog-commons';
+import { DialogFooter, DialogHeader, useAssetDialog } from './dialog-commons';
 import { Pagination } from './pagination';
 
 export function HygraphAssetDialog() {
@@ -90,33 +90,30 @@ export function HygraphAssetDialog() {
         </div>
 
         <div className="overflow-auto">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <AssetTable
-              removeFromSelection={removeFromSelection}
-              onSelect={onSelect}
-              assets={assets}
-              selectedAssets={selectedAssets}
-              isSingleSelect={isSingleSelect}
-              addToSelection={addToSelection}
-              sortBy={sortBy}
-              setSortBy={(sortBy) => {
-                setSortBy(sortBy as HygraphSort | null);
-              }}
-              sortableColumns={[
-                'id',
-                'createdAt',
-                'updatedAt',
-                'handle',
-                'fileName',
-                'height',
-                'width',
-                'size',
-                'mimeType'
-              ]}
-            />
-          )}
+          <AssetTable
+            removeFromSelection={removeFromSelection}
+            onSelect={onSelect}
+            assets={assets ?? []}
+            isLoading={isLoading}
+            selectedAssets={selectedAssets}
+            isSingleSelect={isSingleSelect}
+            addToSelection={addToSelection}
+            sortBy={sortBy}
+            setSortBy={(sortBy) => {
+              setSortBy(sortBy as HygraphSort | null);
+            }}
+            sortableColumns={[
+              'id',
+              'createdAt',
+              'updatedAt',
+              'handle',
+              'fileName',
+              'height',
+              'width',
+              'size',
+              'mimeType'
+            ]}
+          />
         </div>
 
         <Pagination

@@ -6,7 +6,7 @@ import { imgixAssetToAsset } from '@/util';
 import { useState } from 'react';
 import { ImgixSort, useImgixAssets } from '../useImgixAssets';
 import { AssetTable } from './asset-table';
-import { DialogFooter, DialogHeader, Loading, useAssetDialog } from './dialog-commons';
+import { DialogFooter, DialogHeader, useAssetDialog } from './dialog-commons';
 import { Pagination } from './pagination';
 
 export function ImgixAssetDialog() {
@@ -67,23 +67,20 @@ export function ImgixAssetDialog() {
         </div>
 
         <div className="overflow-auto">
-          {isLoading ? (
-            <Loading />
-          ) : (
-            <AssetTable
-              removeFromSelection={removeFromSelection}
-              onSelect={onSelect}
-              assets={assets}
-              selectedAssets={selectedAssets}
-              isSingleSelect={isSingleSelect}
-              addToSelection={addToSelection}
-              sortBy={sortBy}
-              setSortBy={(sortBy) => {
-                setSortBy(sortBy as ImgixSort | null);
-              }}
-              sortableColumns={['size', 'createdAt', 'updatedAt']}
-            />
-          )}
+          <AssetTable
+            removeFromSelection={removeFromSelection}
+            onSelect={onSelect}
+            assets={assets ?? []}
+            selectedAssets={selectedAssets}
+            isSingleSelect={isSingleSelect}
+            addToSelection={addToSelection}
+            sortBy={sortBy}
+            isLoading={isLoading}
+            setSortBy={(sortBy) => {
+              setSortBy(sortBy as ImgixSort | null);
+            }}
+            sortableColumns={['size', 'createdAt', 'updatedAt']}
+          />
         </div>
 
         <Pagination

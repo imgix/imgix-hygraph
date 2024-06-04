@@ -1,5 +1,4 @@
 import { Button } from '@/components/button';
-import { Spinner } from '@/components/spinner';
 import { type AppConfig } from '@/hooks/useAppConfig';
 import { Asset } from '@/types';
 import { useUiExtensionDialog } from '@hygraph/app-sdk-react';
@@ -36,14 +35,6 @@ export function DialogFooter({
       </Button>
     </div>
   ) : null;
-}
-
-export function Loading() {
-  return (
-    <div className="grid h-full w-full place-items-center text-brand-500">
-      <Spinner />
-    </div>
-  );
 }
 
 export const useAssetDialog = () => {
