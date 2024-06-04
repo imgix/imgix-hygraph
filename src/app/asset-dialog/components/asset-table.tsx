@@ -216,8 +216,8 @@ const TableHeader = ({
     },
     {
       bounds: {
-        // base width is 120 so -40 is capping the width to 80
-        left: -40
+        // base width is 120, so -80 is ensuring we don't go below 40
+        left: -80
       }
     }
   );
