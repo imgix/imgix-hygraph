@@ -2,7 +2,7 @@ import { useApp } from '@hygraph/app-sdk-react';
 import { useMemo } from 'react';
 import { z } from 'zod';
 
-export const configSchema = z.object({
+const configSchema = z.object({
   imgixBase: z.string().trim().url(),
   imgixToken: z.string().optional().default(''),
   imgixSourceId: z.string().optional().default(''),

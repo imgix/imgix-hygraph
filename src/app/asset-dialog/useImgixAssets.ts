@@ -13,18 +13,31 @@ type ImgixAssetsResponse = {
   };
 };
 
+const sorts = {
+  size_ASC: '-file_size',
+  size_DESC: 'file_size',
+  createdAt_ASC: '-date_created',
+  createdAt_DESC: 'date_created',
+  updatedAt_ASC: '-date_modified',
+  updatedAt_DESC: 'date_modified'
+};
+
+export type ImgixSort = keyof typeof sorts;
+
 export const useImgixAssets = ({
   apiKey,
   sourceId,
   resultsPerPage,
   pageNumber,
-  query
+  query,
+  orderBy
 }: {
   apiKey: string;
   sourceId: string;
   resultsPerPage: number;
   pageNumber: number;
   query?: string;
+  orderBy?: ImgixSort;
 }) => {
   const first = resultsPerPage;
   const skip = resultsPerPage * (pageNumber - 1);
@@ -40,8 +53,12 @@ export const useImgixAssets = ({
     params.append('filter[or:origin_path]', query);
   }
 
+  if (orderBy) {
+    params.append('sort', sorts[orderBy]);
+  }
+
   const assets = useQuery({
-    queryKey: ['assets', { skip, first, sourceId, query }],
+    queryKey: ['assets', { skip, first, sourceId, query, orderBy }],
     queryFn: async () => {
       const response = await fetch(`https://api.imgix.com/api/v1/sources/${sourceId}/assets?${params}`, {
         headers: {
