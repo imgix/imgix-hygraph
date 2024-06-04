@@ -10,23 +10,6 @@ import FieldRelationIcon from '/public/icons/field-relation.svg';
 import OrderAscIcon from '/public/icons/order-asc.svg';
 import OrderDescIcon from '/public/icons/order-desc.svg';
 
-type Column =
-  | 'action'
-  | 'preview'
-  | 'id'
-  | 'createdAt'
-  | 'createdBy'
-  | 'updatedAt'
-  | 'updatedBy'
-  | 'handle'
-  | 'fileName'
-  | 'height'
-  | 'width'
-  | 'size'
-  | 'mimeType';
-
-type ColumnSort = `${Column}_ASC` | `${Column}_DESC`;
-
 const resizableColumns: [Column, string][] = [
   ['id', 'ID'],
   ['createdAt', 'Created At'],
@@ -40,22 +23,6 @@ const resizableColumns: [Column, string][] = [
   ['size', 'Size'],
   ['mimeType', 'Mime Type']
 ];
-
-const defaultColumnWidths: Record<Column, number> = {
-  action: 60,
-  preview: 80,
-  id: 120,
-  createdAt: 120,
-  createdBy: 120,
-  updatedAt: 120,
-  updatedBy: 120,
-  handle: 120,
-  fileName: 120,
-  height: 120,
-  width: 120,
-  size: 120,
-  mimeType: 120
-};
 
 export function AssetTable({
   removeFromSelection,
@@ -80,48 +47,9 @@ export function AssetTable({
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
-  const [columnWidths, setColumnWidths] = useState<Record<Column, number>>(defaultColumnWidths);
+  const { handleResize, columnWidthVariablesStyle } = useResizableColumns();
 
-  const handleResize = useCallback(
-    (columnName: Column) => (deltaX: number) => {
-      setColumnWidths((old) => {
-        const oldWidth = old[columnName];
-        const newWidth = oldWidth + deltaX;
-        return {
-          ...old,
-          [columnName]: newWidth
-        };
-      });
-    },
-    [setColumnWidths]
-  );
-
-  const columnWidthVariablesStyle = useMemo(() => {
-    const propertiesList = Object.entries(columnWidths).map(([columnName, width]) => {
-      return [`--${columnName}-width`, String(width)];
-    });
-
-    return Object.fromEntries(propertiesList) as CSSProperties;
-  }, [columnWidths]);
-
-  const isSortable = (columnName: Column) => sortableColumns.includes(columnName);
-
-  const handleSort = useCallback(
-    (columnName: Column) => () => {
-      if (sortBy === null || !sortBy.startsWith(columnName)) {
-        setSortBy(`${columnName}_ASC`);
-        return;
-      }
-
-      if (sortBy === `${columnName}_ASC`) {
-        setSortBy(`${columnName}_DESC`);
-        return;
-      }
-
-      setSortBy(null);
-    },
-    [setSortBy, sortBy]
-  );
+  const { isSortable, handleSort } = useSortableColumns(sortableColumns, sortBy, setSortBy);
 
   return (
     <table style={columnWidthVariablesStyle}>
@@ -236,6 +164,21 @@ export function AssetTable({
   );
 }
 
+type Column =
+  | 'action'
+  | 'preview'
+  | 'id'
+  | 'createdAt'
+  | 'createdBy'
+  | 'updatedAt'
+  | 'updatedBy'
+  | 'handle'
+  | 'fileName'
+  | 'height'
+  | 'width'
+  | 'size'
+  | 'mimeType';
+
 const TableHeader = ({
   children,
   resizable,
@@ -296,6 +239,50 @@ const TableCell = ({ children, name }: { children?: ReactNode; name: Column }) =
   );
 };
 
+const defaultColumnWidths: Record<Column, number> = {
+  action: 60,
+  preview: 80,
+  id: 120,
+  createdAt: 120,
+  createdBy: 120,
+  updatedAt: 120,
+  updatedBy: 120,
+  handle: 120,
+  fileName: 120,
+  height: 120,
+  width: 120,
+  size: 120,
+  mimeType: 120
+};
+
+const useResizableColumns = () => {
+  const [columnWidths, setColumnWidths] = useState<Record<Column, number>>(defaultColumnWidths);
+
+  const handleResize = useCallback(
+    (columnName: Column) => (deltaX: number) => {
+      setColumnWidths((old) => {
+        const oldWidth = old[columnName];
+        const newWidth = oldWidth + deltaX;
+        return {
+          ...old,
+          [columnName]: newWidth
+        };
+      });
+    },
+    [setColumnWidths]
+  );
+
+  const columnWidthVariablesStyle = useMemo(() => {
+    const propertiesList = Object.entries(columnWidths).map(([columnName, width]) => {
+      return [`--${columnName}-width`, String(width)];
+    });
+
+    return Object.fromEntries(propertiesList) as CSSProperties;
+  }, [columnWidths]);
+
+  return { handleResize, columnWidthVariablesStyle };
+};
+
 const getCellStyle = (columnName: Column) => {
   const width = `calc(var(--${columnName}-width) * 1px)`;
 
@@ -304,6 +291,35 @@ const getCellStyle = (columnName: Column) => {
     minWidth: width,
     maxWidth: width
   };
+};
+
+type ColumnSort = `${Column}_ASC` | `${Column}_DESC`;
+
+const useSortableColumns = (
+  sortableColumns: Column[],
+  sortBy: ColumnSort | null,
+  setSortBy: (columnName: ColumnSort | null) => void
+) => {
+  const isSortable = (columnName: Column) => sortableColumns.includes(columnName);
+
+  const handleSort = useCallback(
+    (columnName: Column) => () => {
+      if (sortBy === null || !sortBy.startsWith(columnName)) {
+        setSortBy(`${columnName}_ASC`);
+        return;
+      }
+
+      if (sortBy === `${columnName}_ASC`) {
+        setSortBy(`${columnName}_DESC`);
+        return;
+      }
+
+      setSortBy(null);
+    },
+    [setSortBy, sortBy]
+  );
+
+  return { isSortable, handleSort };
 };
 
 const formatDate = (date: Date) => {
