@@ -10,8 +10,8 @@ import { useEffect, useState } from 'react';
 import { isNullish, uniqueBy } from 'remeda';
 import { AssetTable } from './components/asset-table';
 import { Pagination } from './components/pagination';
-import { useHygraphAssets } from './useHygraphAssets';
-import { useImgixAssets } from './useImgixAssets';
+import { HygraphSort, useHygraphAssets } from './useHygraphAssets';
+import { ImgixSort, useImgixAssets } from './useImgixAssets';
 import FieldAssetIcon from '/public/icons/field-asset.svg';
 import { Input } from '@/components/input';
 import { useDebounceValue } from 'usehooks-ts';
@@ -57,6 +57,8 @@ function HygraphAssetDialog() {
   const [showOnlySelectedAssets, setShowOnlySelectedAssets] = useState(false);
   const [selectedAssetsSnapshot, setSelectedAssetsSnapshot] = useState<Asset[]>([]);
 
+  const [sortBy, setSortBy] = useState<HygraphSort | null>(null);
+
   const assetsQuery = useHygraphAssets({
     apiBase: context.environment.endpoint,
     authToken: context.environment.authToken,
@@ -64,7 +66,8 @@ function HygraphAssetDialog() {
     pageNumber: page,
     includedIds: showOnlySelectedAssets ? selectedAssetsSnapshot.map((asset) => asset.id) : undefined,
     excludedIds: excludedAssets.filter((id) => !isNullish(id)),
-    query: debouncedQuery
+    query: debouncedQuery,
+    orderBy: sortBy ?? undefined
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => hygraphAssetToAsset(asset, configuration.imgixBase));
@@ -119,6 +122,21 @@ function HygraphAssetDialog() {
               selectedAssets={selectedAssets}
               isSingleSelect={isSingleSelect}
               addToSelection={addToSelection}
+              sortBy={sortBy}
+              setSortBy={(sortBy) => {
+                setSortBy(sortBy as HygraphSort | null);
+              }}
+              sortableColumns={[
+                'id',
+                'createdAt',
+                'updatedAt',
+                'handle',
+                'fileName',
+                'height',
+                'width',
+                'size',
+                'mimeType'
+              ]}
             />
           )}
         </div>
@@ -160,12 +178,15 @@ function ImgixAssetDialog() {
     debouncedQuery
   } = useAssetDialog();
 
+  const [sortBy, setSortBy] = useState<ImgixSort | null>(null);
+
   const assetsQuery = useImgixAssets({
     apiKey: configuration.imgixToken,
     pageNumber: page,
     resultsPerPage: resultsPerPage,
     sourceId: configuration.imgixSourceId,
-    query: debouncedQuery
+    query: debouncedQuery,
+    orderBy: sortBy ?? undefined
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => imgixAssetToAsset(asset, configuration.imgixBase));
@@ -206,6 +227,11 @@ function ImgixAssetDialog() {
               selectedAssets={selectedAssets}
               isSingleSelect={isSingleSelect}
               addToSelection={addToSelection}
+              sortBy={sortBy}
+              setSortBy={(sortBy) => {
+                setSortBy(sortBy as ImgixSort | null);
+              }}
+              sortableColumns={['size', 'createdAt', 'updatedAt']}
             />
           )}
         </div>

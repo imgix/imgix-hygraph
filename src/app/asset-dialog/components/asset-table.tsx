@@ -1,11 +1,14 @@
 import { Button } from '@/components/button';
 import { Checkbox } from '@/components/checkbox';
 import { Asset } from '@/types';
+import { cn } from '@/util';
 import { useDrag } from '@use-gesture/react';
 import prettyBytes from 'pretty-bytes';
 import { useCallback, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { User } from './user';
 import FieldRelationIcon from '/public/icons/field-relation.svg';
+import OrderAscIcon from '/public/icons/order-asc.svg';
+import OrderDescIcon from '/public/icons/order-desc.svg';
 
 type Column =
   | 'action'
@@ -19,8 +22,10 @@ type Column =
   | 'fileName'
   | 'height'
   | 'width'
-  | 'fileSize'
+  | 'size'
   | 'mimeType';
+
+type ColumnSort = `${Column}_ASC` | `${Column}_DESC`;
 
 const resizableColumns: [Column, string][] = [
   ['id', 'ID'],
@@ -32,7 +37,7 @@ const resizableColumns: [Column, string][] = [
   ['fileName', 'File Name'],
   ['height', 'Height'],
   ['width', 'Width'],
-  ['fileSize', 'Size'],
+  ['size', 'Size'],
   ['mimeType', 'Mime Type']
 ];
 
@@ -48,7 +53,7 @@ const defaultColumnWidths: Record<Column, number> = {
   fileName: 120,
   height: 120,
   width: 120,
-  fileSize: 120,
+  size: 120,
   mimeType: 120
 };
 
@@ -58,7 +63,10 @@ export function AssetTable({
   assets,
   selectedAssets,
   isSingleSelect,
-  addToSelection
+  addToSelection,
+  sortableColumns,
+  setSortBy,
+  sortBy
 }: {
   removeFromSelection: (removedAssets: Asset[]) => void;
   onSelect: (asset: Asset) => void;
@@ -66,6 +74,9 @@ export function AssetTable({
   selectedAssets: Asset[];
   isSingleSelect: boolean;
   addToSelection: (addedAssets: Asset[]) => void;
+  sortableColumns: Column[];
+  setSortBy: (columnName: ColumnSort | null) => void;
+  sortBy: ColumnSort | null;
 }) {
   const allSelected = assets.every((asset) => selectedAssets.some((selectedAsset) => selectedAsset.id === asset.id));
 
@@ -93,6 +104,25 @@ export function AssetTable({
     return Object.fromEntries(propertiesList) as CSSProperties;
   }, [columnWidths]);
 
+  const isSortable = (columnName: Column) => sortableColumns.includes(columnName);
+
+  const handleSort = useCallback(
+    (columnName: Column) => () => {
+      if (sortBy === null || !sortBy.startsWith(columnName)) {
+        setSortBy(`${columnName}_ASC`);
+        return;
+      }
+
+      if (sortBy === `${columnName}_ASC`) {
+        setSortBy(`${columnName}_DESC`);
+        return;
+      }
+
+      setSortBy(null);
+    },
+    [setSortBy, sortBy]
+  );
+
   return (
     <table style={columnWidthVariablesStyle}>
       <thead>
@@ -117,7 +147,14 @@ export function AssetTable({
           <TableHeader name="preview">Preview</TableHeader>
 
           {resizableColumns.map(([name, label]) => (
-            <TableHeader key={name} name={name} resizable onResize={handleResize(name)}>
+            <TableHeader
+              key={name}
+              name={name}
+              resizable
+              onResize={handleResize(name)}
+              onSort={isSortable(name) ? handleSort(name) : undefined}
+              sortBy={sortBy ?? undefined}
+            >
               {label}
             </TableHeader>
           ))}
@@ -186,7 +223,7 @@ export function AssetTable({
                 <pre>{asset.width ?? '-'}</pre>
               </TableCell>
 
-              <TableCell name="fileSize">
+              <TableCell name="size">
                 <pre>{prettyBytes(asset.fileSize)}</pre>
               </TableCell>
 
@@ -203,12 +240,16 @@ const TableHeader = ({
   children,
   resizable,
   onResize,
-  name
+  name,
+  onSort,
+  sortBy
 }: {
   children?: ReactNode;
   resizable?: boolean;
   onResize?: (deltaX: number) => void;
   name: Column;
+  onSort?: () => void;
+  sortBy?: ColumnSort;
 }) => {
   const bind = useDrag(
     (state) => {
@@ -222,12 +263,26 @@ const TableHeader = ({
     }
   );
 
+  const sortedBy = sortBy?.startsWith(name);
+
   return (
     <th
-      className="relative overflow-hidden text-ellipsis text-nowrap border-r px-2 text-left text-xs font-medium text-slate-500"
+      className={cn(
+        'relative overflow-hidden text-ellipsis text-nowrap border-r px-2 text-left text-xs font-medium text-slate-500',
+        sortedBy && 'border-b border-b-brand-500'
+      )}
       style={getCellStyle(name)}
     >
-      {children}
+      <div onClick={onSort} className="flex h-[25.5px] w-full select-none items-center justify-between">
+        <span>{children}</span>
+
+        {sortedBy && sortBy?.endsWith('_ASC') ? (
+          <OrderAscIcon className="h-4 w-4 text-brand-500" />
+        ) : sortedBy && sortBy?.endsWith('_DESC') ? (
+          <OrderDescIcon className="h-4 w-4 text-brand-500" />
+        ) : null}
+      </div>
+
       {resizable ? <div className="absolute right-0 top-0 h-full w-5 cursor-ew-resize touch-none" {...bind()} /> : null}
     </th>
   );
