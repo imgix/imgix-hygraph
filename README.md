@@ -7,7 +7,7 @@
 
 - If you replace an asset's file in Hygraph, it will not update and show the old version instead. Please delete the asset completely and create a new one if you want to change the displayed image.
 
-- Sometimes fields might be clipped due to a bug in Hygraph. The button to add or change assets might not be visible then. Please refresh the page to resolve the issue. If the issue still persists after a refresh report this bug to Imgix.
+- Sometimes fields might get clipped and the button to add or change assets might not be visible. Generaly refreshing the page resolves the issue. If the issue still persists after a refresh report this bug to Imgix.
 
 ## Installation
 
