@@ -49,7 +49,7 @@ export function HygraphAssetDialog() {
   });
 
   const assets = assetsQuery?.data?.assets.map((asset) => hygraphAssetToAsset(asset, configuration.imgixBase));
-  const isLoading = assetsQuery.isLoading;
+  const isLoading = assetsQuery.isLoading || assetsQuery.isPlaceholderData;
 
   return (
     <div className="h-[48rem]">

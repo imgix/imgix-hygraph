@@ -59,6 +59,7 @@ export const useImgixAssets = ({
 
   const assets = useQuery({
     queryKey: ['assets', { skip, first, sourceId, query, orderBy }],
+    placeholderData: (previousData) => previousData,
     queryFn: async () => {
       const response = await fetch(`https://api.imgix.com/api/v1/sources/${sourceId}/assets?${params}`, {
         headers: {

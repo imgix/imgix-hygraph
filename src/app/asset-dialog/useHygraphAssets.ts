@@ -101,6 +101,7 @@ export const useHygraphAssets = ({
 
   const assets = useQuery({
     queryKey: ['assets', { skip, first, excludedIds, includedIds, query, orderBy }],
+    placeholderData: (previousData) => previousData,
     queryFn: async () => {
       const data = await request<Data>({
         url: apiBase,
