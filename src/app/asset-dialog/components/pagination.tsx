@@ -1,6 +1,6 @@
 import { Button } from '@/components/button';
 import { Select } from '@headlessui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const Pagination = ({
   page,
@@ -44,6 +44,10 @@ export const Pagination = ({
     setPage(clamped);
     setPageInput(String(clamped));
   };
+
+  useEffect(() => {
+    setPageInput(String(page));
+  }, [page]);
 
   const [pageInput, setPageInput] = useState(String(page));
 
