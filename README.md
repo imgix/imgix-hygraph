@@ -1,14 +1,5 @@
 # Hygraph Imgix App
 
-## Known limitations
-
-> [!WARNING]  
-> These are known limitations due to the way Hygraph/our app works. Please read these carefully before using this app.
-
-- If you replace an asset's file in Hygraph, it will not update and show the old version instead. Please delete the asset completely and create a new one if you want to change the displayed image.
-
-- Sometimes fields might get clipped and the button to add or change assets might not be visible. Generaly refreshing the page resolves the issue. If the issue still persists after a refresh report this bug to Imgix.
-
 ## Installation
 
 This app can be installed in your Hygraph project from the Hygraph Marketplace.
@@ -19,13 +10,13 @@ This app can be installed in your Hygraph project from the Hygraph Marketplace.
 
 ## Configuration
 
-To use this app, you will need to create an imgix source, either a Web Folder type source to use your Hygraph assets or any other source types to use assets hosted outside of Hygraph.
+To use this app, you will need to [create an imgix source](https://docs.imgix.com/getting-started/setup/creating-sources), either a Web Folder source type, to use your Hygraph assets, or any other source types to use assets hosted outside of Hygraph.
 
 ### Using assets from Hygraph
 
 #### Step 1 - Configuring the imgix source
 
-1. Create a new imgix source, selecting "Web Folder" as a Storage Type.
+1. Create a new imgix source, selecting ["Web Folder"](https://docs.imgix.com/getting-started/setup/creating-sources/web-folder) as a Storage Type.
 
 2. Now enter the base URL for your imgix source. To obtain the URL, go to the "Assets" tab in the Hygraph app and right click any asset thumbnail, then select "Copy Image Address". Keep the part before `/output=...` and delete the rest.
 
@@ -70,3 +61,12 @@ Please refer to the [imgix documentation](https://docs.imgix.com/setup/creating-
 1. In your Hygraph Model search for the "Imgix Field" field type and add it to your model.
 
 2. After adding the field, you can use it like a regular "Asset picker" field.
+
+## Known limitations
+
+> [!IMPORTANT]
+> These are known limitations due to the way Hygraph/our app works. Please read these carefully before using this app.
+
+- If you replace an asset's file in Hygraph, it will not update and show the old version instead. Please delete the asset completely and create a new one if you want to change the displayed image.
+
+- Sometimes, fields might get clipped and the button to add or change assets might not be visible. Refreshing the page resolves the issue. This a rare but known bug for Hygraph apps. If the issue still persists after a refresh open an issue.
