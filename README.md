@@ -19,7 +19,7 @@ With the imgix app, you can use imgix to serve assets from your Hygraph project.
 
 <!-- TODO: update marketplace link after publishing the app to the marketplace -->
 
-[Click here](https://hygraph.com/marketplace/apps/hygraph-imgix-plugin) to install the imgix app, then follow the setup instructions below.
+[Click here](https://hygraph.com/marketplace/apps/hygraph-imgix-app) to install the imgix app, then follow the setup instructions below.
 
 ## Configuration
 
